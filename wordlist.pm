@@ -1,3 +1,5 @@
+package wordlist;
+
 #stolen from http://cpansearch.perl.org/src/APOCAL/Pod-Spell-CommonMistakes-1.000/lib/Pod/Spell/CommonMistakes/WordList.pm
 my %common = (
  "abandonning" => "abandoning",
@@ -548,7 +550,7 @@ sub fix_text {
     return $text;
 }
 
-sub preserve_case() {
+sub preserve_case {
     my ($old, $new) = @_;
     my $mask = uc $old ^ $old;
     uc $new | $mask .
@@ -573,5 +575,7 @@ sub check_common {
     return 0;
 }
 
+use base 'Exporter';
+our @EXPORT = qw{fix_text check_common};
 
 1;
