@@ -3,7 +3,7 @@ $| = 1;
 use LWP::UserAgent;
 use Text::SpellChecker;
 use Net::Twitter;
-require('wordlist.pl');
+use wordlist qw{fix_text check_common};
 
 my $c = 0;
 my $token = "";
@@ -54,7 +54,7 @@ sub handle_url {
 	my $url2 = "https://github.com/".$user."/$repo";
 	my $res2 = $ua->get($url2);
 	$c = $c+1;
-	if (!$res2->is_success || ($c < 16 && $repo !~ //)) {
+	if (!$res2->is_success || (( $c < 16 ) && ( lenght($repo) > 0 ))) {
 	    print "Missing repo $repo.\n";
 	    my $fork_res = $ua->post("https://github.com/api/v2/json/repos/fork/$ruser/$repo",{login => $user,
 	       token => $token});
@@ -67,16 +67,13 @@ sub handle_url {
 	    print "runing: cd foo; git clone git\@github.com:$user/$repo.git || git clone git\@github.com:$user/$repo.git;cd ..";
 	    `cd foo; git clone git\@github.com:$user/$repo.git || git clone git\@github.com:$user/$repo.git;cd ..`;
 	    #Fix
-	    my $t = "";
-	    open (IN, "foo/$repo/$file") or die "Unable to open $file in $repo";
-	    while ($j = <IN>) {
-		$t = $t.$j;
-	    }
-	    close(IN);
-	    open (OUT, ">foo/$repo/$file") or die "Unable to open $file in $repo";
+	    open (my $in, "<", "foo/$repo/$file") or die "Unable to open $file in $repo";
+	    my $t = do { local $/ = <$in> };
+	    close($in);
+	    open ($out, ">", "foo/$repo/$file") or die "Unable to open $file in $repo";
 	    my $t = fix_text($t);
-	    print OUT $t;
-	    close (OUT);
+	    print $out $t;
+	    close ($out);
 	    `cd foo;cd $repo; git commit -a -m \"Spelling correction in README\"; git push; sleep 1;git push; cd ..;cd ..`;
 	    my $make_pull_req = 1;
 	    if ($make_pull_req) {

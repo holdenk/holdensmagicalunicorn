@@ -2,7 +2,7 @@
 $| = 1;
 use LWP::UserAgent;
 use Text::SpellChecker;
-require('wordlist.pl');
+use wordlist qw{check_common};
 
 my $ua = new LWP::UserAgent;
 print "Hello!\n";
