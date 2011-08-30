@@ -553,8 +553,8 @@ sub fix_text {
 sub preserve_case {
     my ($old, $new) = @_;
     my $mask = uc $old ^ $old;
-    uc $new | $mask .
-	substr($mask, -1) x (length($new) - length($old))
+    $mask = substr($mask, 0, length $new);
+    return uc $new | $mask;
 }
 
 sub check_common {
