@@ -64,7 +64,7 @@ sub handle_url {
 	    print "Sleeping rand()*10\n";
 	    sleep (10*rand());
 	    #clone
-	    print "runing: cd foo; git clone git\@github.com:$user/$repo.git || git clone git\@github.com:$user/$repo.git;cd ..";
+	    print "running: cd foo; git clone git\@github.com:$user/$repo.git || git clone git\@github.com:$user/$repo.git;cd ..";
 	    `cd foo; git clone git\@github.com:$user/$repo.git || git clone git\@github.com:$user/$repo.git;cd ..`;
 	    #Fix
 	    open (my $in, "<", "foo/$repo/$file") or die "Unable to open $file in $repo";
@@ -77,7 +77,7 @@ sub handle_url {
 	    `cd foo;cd $repo; git commit -a -m \"Spelling correction in README\"; git push; sleep 1;git push; cd ..;cd ..`;
 	    my $make_pull_req = 1;
 	    if ($make_pull_req) {
-		print "Sleeping 10 for github to catch up with teh push...\n";
+		print "Sleeping 10 for github to catch up with the push...\n";
 		sleep(10);
 		my $pull_request = $ua->post("https://github.com/api/v2/json/pulls/$ruser/$repo",{login => $user,
 												  token => $token,
@@ -95,7 +95,7 @@ sub handle_url {
 		}
 	    }
 	} else {
-	    print "Allready have $repo from $url2 , skipping forward!\n";
+	    print "Already have $repo from $url2 , skipping forward!\n";
 	}
     }
     
