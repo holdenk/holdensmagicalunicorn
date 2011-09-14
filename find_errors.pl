@@ -12,7 +12,7 @@ while (<>) {
     $url =~ s/tree/raw/;
     my $res = $ua->get($url);
     my $rt = $res->as_string();
-    $rt." githuub";
+    $rt." github";
     if (check_common($rt)) {
 	print "error: ".$url;
     }
