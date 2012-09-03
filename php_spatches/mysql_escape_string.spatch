@@ -1,0 +1,2 @@
+-mysql_escape_string(X);
++mysql_real_escape_string(X);

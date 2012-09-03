@@ -131,7 +131,7 @@ sub generate_twitter_msg {
 sub handle_files {
     print "handle_files called\n";
     my @files = @_;
-    my @handlers = (handle_group("Fixing typos in README",qr/\/README(\.txt|\.rtf|\.md|\.m\w+)$/,\&check_common,\&fix_text),
+    my @handlers = (handle_group("Fixing typos in README",qr/\/README(\.txt|\.rtf|\.md|\.pm|\.m\w+)$/,\&check_common,\&fix_text),
                     handle_group("Fixing old PHP calls",qr/\.php$/,\&check_php,\&fix_php),
                     handle_group("Updating shell scripts",qr/\/\w(\.sh|\.bash|)$/,\&check_shell,\&fix_shell),
                     handle_group("Fixing deprecated django",qr/\.py$/,\&check_py,\&fix_py),
@@ -168,7 +168,7 @@ sub handle_group {
                 #Is there a spelling mistake?
                 if ($gate_function->($t)) {
                     open (my $out, ">", "$file") or die "Unable to open $file";
-                    print $out $fix_function->($t);
+                    print $out $fix_function->($file, $t);
                     close ($out);
                 }                
             }

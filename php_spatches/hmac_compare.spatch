@@ -1,0 +1,3 @@
+-hash_hmac(X,Y,Z) == A
++magicSecureStringCompare(hash_hmac(X,Y,Z),A)
+

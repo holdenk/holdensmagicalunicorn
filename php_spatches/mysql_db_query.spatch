@@ -1,0 +1,2 @@
+-mysql_db_query(X,Y,Z)
++(mysql_select_db(X,Z) && mysql_query(Y,Z))
