@@ -34,8 +34,8 @@ sub addFunction {
 	$file_contents = "include_once(\"$func\.php\");\n".$file_contents;
     }
     $file_path = dirname($path);
-   `cp $phpFunctionDir.$func\.php $file_path`;
-    `git add $file_path`;
+    `cp $phpFunctionDir.$func\.php $file_path`;
+    `cd $file_path;git add $func\.php`;
 }
 
 
