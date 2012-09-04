@@ -15,7 +15,6 @@ sub fix_shell {
         #Probably!
         #Handle with [-e foo -e bar]
 	# http://www.pixelbeat.org/programming/shell_script_mistakes.html
-#        $rt =~ s/if\s*\[\s*\-e\s*(\w+?)\s*\-e(\w+?)\s*\]\s*$/if [-e $1] || [-e $2]/;
         $rt =~ s/if\s*\[\s*\-e\s*(\w+?)\s*\-e\s*(\w+?)\s*\]\s*$/if [-e $1] || [\-e $2]/;
         #Double negative
         $rt =~ s/\[\s*\!\-z\s*(\"\$\w*\")\]/[$1]/;
