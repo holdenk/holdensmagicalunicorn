@@ -1,14 +1,24 @@
+package Unicorn::Shell;
+
+use strict;
+require Exporter;
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw{check_shell fix_shell};
+
+
 sub fix_shell {
     my $file = shift @_;
     my $rt = shift @_;
+    my @r = split(/\n/,$rt);
     #Is it a shell script
     if ($r[0] =~ /\#\!\/bin\/(ba|z|)sh/ || $r[0] =~ /\#\!\/bin\/env (ba|z|)sh/) {
         #Probably!
         #Handle with [-e foo -e bar]
 	# http://www.pixelbeat.org/programming/shell_script_mistakes.html
-        $rt =~ /\[\s*\-e\s*(\w+?)\s*\-e(\w+?)\s*\]/[-e $1] || [-e $2]/;
+#        $rt =~ s/if\s*\[\s*\-e\s*(\w+?)\s*\-e(\w+?)\s*\]\s*$/if [-e $1] || [-e $2]/;
+        $rt =~ s/if\s*\[\s*\-e\s*(\w+?)\s*\-e\s*(\w+?)\s*\]\s*$/if [-e $1] || [\-e $2]/;
         #Double negative
-        $rt =~ /\[\s*\!\-z\s*(\"\$\w*\"\)]/[$1]/;
+        $rt =~ s/\[\s*\!\-z\s*(\"\$\w*\")\]/[$1]/;
         #Check for cat pipe to grep
 	#i.e cat foo | grep baz
         $rt =~ s/^\s*cat\s*(\w+)\s*\|\s*grep\s+([\w\"]+)\s*$/grep $2 < $1/
@@ -25,7 +35,7 @@ sub check_shell {
     if ($r[0] =~ /\#\!\/bin\/(ba|z|)sh/ || $r[0] =~ /\#\!\/bin\/env (ba|z|)sh/) {
         #Probably!
         #Handle with [-e foo -e bar]
-        if ($rt =~ /\[\s*\-e\s*\w*?\s*\-e\w*?\s*\]/) {
+        if ($rt =~ /\[\s*\-e\s*\w*?\s*\-e\s*\w*?\s*\]/) {
             return 1;
         }
         #Double negative
@@ -42,8 +52,6 @@ sub check_shell {
     return 0;
 }
 
-use base 'Exporter';
-our @EXPORT = qw{check_shell fix_shell};
 
 1;
 

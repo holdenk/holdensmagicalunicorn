@@ -1,4 +1,5 @@
 A very simple github bot. Uses an accout of the same name. It provides spelling corrections for README files and other simple suggestions.
+Requires pfff for the php code fixing to work.
 See:
 https://twitter.com/#!/HoldensUnicorn
 https://github.com/holdensmagicalunicorn

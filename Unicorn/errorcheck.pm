@@ -1,8 +1,7 @@
-package lib::unicorn::errorcheck;
+package unicorn::errorcheck;
 use strict;
 use php;
 use shell;
-
 
 sub check_go {
     my $file = shift @_;
