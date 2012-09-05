@@ -17,7 +17,7 @@ sub fix_shell {
 	# http://www.pixelbeat.org/programming/shell_script_mistakes.html
         $rt =~ s/if\s*\[\s*\-e\s*(\w+?)\s*\-e\s*(\w+?)\s*\]\s*$/if [-e $1] || [\-e $2]/;
         #Double negative
-        $rt =~ s/\[\s*\!\-z\s*(\"\$\w*\")\]/[$1]/;
+#        $rt =~ s/\[\s*\!\-z\s*(\"\$\w*\")\]/SUP/;
         #Check for cat pipe to grep
 	#i.e cat foo | grep baz
         $rt =~ s/^\s*cat\s*(\w+)\s*\|\s*grep\s+([\w\"]+)\s*$/grep $2 < $1/
