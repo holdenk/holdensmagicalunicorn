@@ -1,4 +1,4 @@
-package blacklist;
+package Unicorn::Blacklist;
 
 sub ok_to_update {
     my $user = shift @_;

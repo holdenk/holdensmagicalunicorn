@@ -1,4 +1,4 @@
-package wordlist;
+package Unicorn::Wordlist;
 
 #stolen from http://cpansearch.perl.org/src/APOCAL/Pod-Spell-CommonMistakes-1.000/lib/Pod/Spell/CommonMistakes/WordList.pm
 my %common = (

@@ -1,4 +1,4 @@
-package php;
+package Unicorn::PHP;
 use strict;
 use File::Basename;
 

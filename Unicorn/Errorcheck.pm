@@ -1,4 +1,4 @@
-package unicorn::errorcheck;
+package Unicorn::Errorcheck;
 use strict;
 use php;
 use shell;

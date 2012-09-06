@@ -1,4 +1,4 @@
-package django;
+package Unicorn::Django;
 use strict;
 
 sub check_django_settings {
