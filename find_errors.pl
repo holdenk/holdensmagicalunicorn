@@ -2,8 +2,8 @@
 $| = 1;
 use LWP::UserAgent;
 use Text::SpellChecker;
-use wordlist qw{check_common};
-use errorcheck qw{check_php check_shell check_py check_go};
+use Unicorn::Wordlist qw{check_common};
+use Unicorn::Errorcheck qw{check_php check_shell check_py check_go};
 use File::Temp;
 use strict;
 
@@ -16,7 +16,7 @@ while (<>) {
     my $res = $ua->get($url);
     my $rt = $res->as_string();
     my $tempfile = File::Temp->new();
-    my $tempfileName = $fh->filename;
+    my $tempfileName = $tempfile->filename;
     open (my $out, ">$tempfileName");
     print $out $rt;
     close ($out);

@@ -31,7 +31,7 @@ sub fix_django_settings {
 		#We want to grab all of the DATABASE_ lines sitting together
 		my %shineys;
 		if ($lines[$j] =~ /DATABASE\_(.*)/) {
-		    for my ($k = $j; $k < $#lines && $lines[$k] =~ /DATABASE\_(.*?)\s*\=/ ; ++$k) {
+		    for (my $k = $j; $k < $#lines && $lines[$k] =~ /DATABASE\_(.*?)\s*\=/; $k) {
 			if ($lines[$k] =~ /DATABASES\_(.*?)\s*\=\s*(.*)/) {
 			    $lines[$k] = "$1 : $2";
 			}
@@ -39,7 +39,7 @@ sub fix_django_settings {
 		}
 		
 	    }
-	    $rt = join($line,'\n');
+	    $rt = join(@lines,'\n');
 	}
     }
     return $rt;

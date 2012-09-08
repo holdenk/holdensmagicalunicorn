@@ -17,12 +17,13 @@ handle_search("Perl","readme.p","(.*?README\.p.*?)\$");
 handle_search("PHP","spliti","(.*?\.php)\$");
 handle_search("PHP","ip2long","(.*?\.php)\$");
 handle_search("PHP","mysql_db_query","(.*?\.php)\$");
+handle_search("PHP","hash_hmac","(.*?\>php)\$");
 #django
 handle_search("Python","\"'ENGINE'%3A+'sqlite3'\"","(.*?settings.*?\.py)");
 #bash
 handle_search("Shell","bash","(.*?\/tree\/.*?\.)");
 #go
-handle_search("Go","nil","(.*\.go)");
+#handle_search("Go","nil","(.*\.go)");
 my @links;
 sub handle_search() {
     my $language = shift @_;

@@ -1,7 +1,8 @@
 package Unicorn::Errorcheck;
 use strict;
-use php;
-use shell;
+use Unicorn::PHP qw( check_php fix_php);
+use Unicorn::Shell qw( check_shell fix_shell);
+use Unicorn::Django qw( check_django_settings fix_django_settings );
 
 sub check_go {
     my $file = shift @_;
@@ -22,7 +23,15 @@ sub fix_cpp {
     return $rt;
 }
 
+sub check_py {
+    return check_django_settings(@_);
+}
+
+sub fix_py {
+    return fix_django_settings(@_);
+}
+
 use base 'Exporter';
-our @EXPORT = qw{check_php fix_php check_go fix_go check_cpp fix_cpp check_shell fix_shell};
+our @EXPORT = qw{check_php fix_php check_go fix_go check_cpp fix_cpp check_shell fix_shell check_py fix_py};
 
 1;
