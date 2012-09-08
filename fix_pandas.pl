@@ -6,9 +6,9 @@ use Pithub;
 use Data::Dumper;
 
 use strict;
-use wordlist qw{fix_text check_common};
-use errorcheck qw{check_php fix_php check_py fix_py check_go fix_go check_cpp fix_cpp check_shell fix_shell};
-use blacklist qw{ ok_to_update };
+use Unicorn::Wordlist qw{fix_text check_common};
+use Unicorn::Errorcheck qw{check_php fix_php check_py fix_py check_go fix_go check_cpp fix_cpp check_shell fix_shell};
+use Unicorn::Blacklist qw{ ok_to_update };
 
 
 my $p = Pithub->new;
@@ -166,7 +166,7 @@ sub handle_group {
                 my $t = do { local $/ = <$in> };
                 close($in);
                 #Is there a spelling mistake?
-                if ($gate_function->($t)) {
+                if ($gate_function->($file, $t)) {
                     open (my $out, ">", "$file") or die "Unable to open $file";
                     print $out $fix_function->($file, $t);
                     close ($out);
