@@ -12,25 +12,31 @@ my $a = "";
 my $inc = 10;
 my $offset = 0;
 my $max = 100;
-while ($offset < $max) {
-    my $search = Bing::Search->new();
-    $search->AppId($a);
-    $search->Query("blob/master/readme.md site:github.com");
-    my $source = Bing::Search::Source::Web->new();
-    $source->Web_Count(10);
-    $source->Web_Offset($offset);
-    my $hash = $source->params;
-    $hash->{'web.offset'} = $offset;
-    $source->params($hash);
-    
-    $search->add_source($source);
-    
-    my $response = $search->search();
-
-    foreach my $result ( @{$response->results} ) {
-	print $result->Title, " -> ", $result->Url, "\n";
+@queries = ("blob/master/readme.md site:github.com",
+	    "settings.py site:github.com",
+	    "readme.txt site:github.com",
+	    "readme.md site:github.com");
+foreach my $query (@queries) {
+    while ($offset < $max) {
+	my $search = Bing::Search->new();
+	$search->AppId($a);
+	$search->Query();
+	my $source = Bing::Search::Source::Web->new();
+	$source->Web_Count(10);
+	$source->Web_Offset($offset);
+	my $hash = $source->params;
+	$hash->{'web.offset'} = $offset;
+	$source->params($hash);
+	
+	$search->add_source($source);
+	
+	my $response = $search->search();
+	
+	foreach my $result ( @{$response->results} ) {
+	    print $result->Title, " -> ", $result->Url, "\n";
+	}
+	$offset += $inc;
     }
-    $offset += $inc;
 }
 #
 #print "Connecting to github!\n";
