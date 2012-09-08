@@ -1,9 +1,11 @@
 package Unicorn::PHP;
 use strict;
 use File::Basename;
+use File::Slurp qw (slurp);
 
-my $spatchexec = "../pfff/spatch";
+my $spatchexec = "spatch";
 my $phpFunctionDir = "./php_functions/";
+my $spatchdir = "php_spatches";
 
 sub check_php {
     my $file = shift @_;
@@ -17,25 +19,37 @@ sub check_php {
 sub fix_php {
     my $file = shift @_;
     #Run the spatches
-    #Check to see if the file needs us to add secure string cmp to it
-    my $file_contents = ;
-    if ($file_contents =~ /magicSecureStringCompare/) {
-	$file_contents = addFunction($file_contents, $magicSecureStringCompare);
-	
+    opendir (my $spatch_files, "$spatchdir") || "can't opendir $!\n";
+    while (my $spatch_file = readdir($spatch_files)) {
+	chomp ($spatch_file);
+	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.spatch$/) {
+	    `$spatchexec --apply-patch -f $spatchdir/$spatch_file $file`;
+	}
     }
+    closedir($spatch_files);
+    #Check to see if the file needs us to add secure string cmp to it
+    my $file_contents = slurp($file);
+    if ($file_contents =~ /magicSecureStringCompare/) {
+	$file_contents = addFunction($file, $file_contents, "magicSecureStringCompare");
+    }
+    open (my $output, ">$file");
+    print $output $file_contents;
+    close($output);
 }
 
 sub addFunction {
+    my $file = shift @_;
     my $file_contents = shift @_;
     my $func = shift @_;
-    if ($file_contents =~ /\<?/) {
-	$file_contents =~ s/\<?/\<?\ninclude_once("$func\.php");/;
+    if ($file_contents =~ /\<\?/) {
+	$file_contents =~ s/\<\?/\<?\ninclude_once("$func\.php");/;
     } else {
 	$file_contents = "include_once(\"$func\.php\");\n".$file_contents;
     }
-    $file_path = dirname($path);
-    `cp $phpFunctionDir.$func\.php $file_path`;
+    my $file_path = dirname($file);
+    `cp $phpFunctionDir$func\.php $file_path`;
     `cd $file_path;git add $func\.php`;
+    return $file_contents;
 }
 
 

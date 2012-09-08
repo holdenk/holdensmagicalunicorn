@@ -1,2 +1,0 @@
--if (ip2long(X)==-1)
-+if (ip2long(X)==-1 || ip2long(X) == FALSE)

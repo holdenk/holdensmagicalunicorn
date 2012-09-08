@@ -1,3 +1,4 @@
+<?
 /**
  * Compare two strings while attempting to limmit leaking information
  * about either string to reduce the chance of side-channel timming
@@ -21,3 +22,4 @@ function magicSecureStringCompare($a, $b) {
  }
  return $different == 0;
 }
+?>
