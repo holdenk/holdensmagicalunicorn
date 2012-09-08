@@ -1,7 +1,7 @@
 #Test the shell script thing
-use Test::More tests => 5;
+use Test::More tests => 4;
 use File::Temp;
-use Unicorn::PHP qw( fix_php check_php);
+use Unicorn::PHP qw(fix_php check_php);
 use File::Slurp qw (slurp);
 use strict;
 
@@ -27,6 +27,9 @@ while (my $file = readdir($php_input_files)) {
 	   slurp("$dirname/php_evaluated/$file.out"));
 	is(slurp("$dirname/php_output/$file"),
 	   slurp("$dirname/php_expected/$file"));
+	#Make sure we git added the file
+	my $gstatus = `cd $dirname/php_output;git status`;
+	is($gstatus =~ /new file:\s*magicSecureStringCompare\.php/,1);
     }
 }
 
