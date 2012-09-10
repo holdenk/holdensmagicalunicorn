@@ -20,6 +20,7 @@ handle_search("PHP","mysql_db_query","(.*?\.php)\$");
 handle_search("PHP","hash_hmac","(.*?\>php)\$");
 #django
 handle_search("Python","\"'ENGINE'%3A+'sqlite3'\"","(.*?settings.*?\.py)");
+handle_search("Python","\"'ENGINE'%3A+'mysql'\"","(.*?settings.*?\.py)");
 #bash
 handle_search("Shell","bash","(.*?\/tree\/.*?\.)");
 #go
