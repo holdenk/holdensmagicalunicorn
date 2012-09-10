@@ -11,8 +11,8 @@ use strict;
 my $ua = new LWP::UserAgent;
 while (<>) {
     my $filepath = $_;
-    my $url = "https://www.github.com/".$filepath;
-    $url =~ s/tree/raw/;
+    my $url = "https://raw.github.com/".$filepath;
+    $url =~ s/\/tree\///;
     my $res = $ua->get($url);
     my $rt = $res->as_string();
     my $tempfile = File::Temp->new();

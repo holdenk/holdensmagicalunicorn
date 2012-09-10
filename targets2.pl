@@ -4,7 +4,7 @@ require HTML::LinkExtor;
 use strict;
 
 my $ua = new LWP::UserAgent;
-my $max = 400;
+my $max = 4000;
 my $v = 1;
 my $inc = 1;
 my @foo;
