@@ -4,9 +4,11 @@ use Bing::Search;
 use Bing::Search::Source::Web;
 use Net::GitHub;
 use Text::SpellChecker;
+use Unicorn::Settings qw{ settings }:
 
-my $token = "";
-my $user = "";
+my $settings = settings();
+my $token = $settings->{"bing.token"};
+my $user = $settings->{"bing.user"};
 
 my $a = "";
 my $inc = 10;

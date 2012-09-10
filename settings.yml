@@ -1,0 +1,10 @@
+
+---
+bing.token: BINGTOKEN
+bing.user: BINGUSERNAME
+twitter.consumer_key: tkey
+twitter.consumer_secret: tsecret
+github.user: guser
+github.token: gtoken
+
+ 

@@ -9,11 +9,16 @@ use strict;
 use Unicorn::Wordlist qw{fix_text check_common};
 use Unicorn::Errorcheck qw{check_php fix_php check_py fix_py check_go fix_go check_cpp fix_cpp check_shell fix_shell};
 use Unicorn::Blacklist qw{ ok_to_update };
-
+use Unicorn::Settings qw{ settings }:
 
 my $p = Pithub->new;
 
 my $c = 0;
+my $settings = settings();
+$consumer_key = $settings->{"twitter.consumer_key"};
+$consumer_secret = $settings->{"twitter.consumer_secret"};
+$user = $settings->{"github.user"};
+$token = $settings->{"github.token"};
 print "using ck $consumer_key / secret $consumer_secret\n";
 my $nt = Net::Twitter->new(
     traits   => [qw/OAuth API::REST/],
