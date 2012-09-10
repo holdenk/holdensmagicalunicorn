@@ -8,8 +8,8 @@ use Unicorn::Settings qw{ settings };
 my $settings = settings();
 my $token = $settings->{"bing.token"};
 my $user = $settings->{"bing.user"};
+my $appid = $settings->{"bing.appid"};
 
-my $a = "";
 my $inc = 10;
 my $offset = 0;
 my $max = 100;
