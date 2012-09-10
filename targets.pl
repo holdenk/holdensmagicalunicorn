@@ -3,7 +3,7 @@
 use Bing::Search;
 use Bing::Search::Source::Web;
 use Text::SpellChecker;
-use Unicorn::Settings qw{ settings }:
+use Unicorn::Settings qw{ settings };
 
 my $settings = settings();
 my $token = $settings->{"bing.token"};
