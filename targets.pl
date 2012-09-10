@@ -2,7 +2,6 @@
 
 use Bing::Search;
 use Bing::Search::Source::Web;
-use Net::GitHub;
 use Text::SpellChecker;
 use Unicorn::Settings qw{ settings }:
 
@@ -41,7 +40,4 @@ foreach my $query (@queries) {
 	$offset += $inc;
     }
 }
-#
-#print "Connecting to github!\n";
-#my $github = Net::GitHub::V2->new(login => $user, token => $token);
 
