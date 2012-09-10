@@ -12,10 +12,11 @@ my $a = "";
 my $inc = 10;
 my $offset = 0;
 my $max = 100;
-@queries = ("blob/master/readme.md site:github.com",
-	    "settings.py site:github.com",
-	    "readme.txt site:github.com",
-	    "readme.md site:github.com");
+@queries = ("readme.md site:raw.github.com",
+	    "settings.py site:raw.github.com",
+	    "readme.txt site:raw.github.com",
+	    "readme.pod site:raw.github.com",
+            "hmac php site:raw.github.com");
 foreach my $query (@queries) {
     while ($offset < $max) {
 	my $search = Bing::Search->new();
