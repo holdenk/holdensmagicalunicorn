@@ -11,29 +11,35 @@ use strict;
 my $ua = new LWP::UserAgent;
 while (<>) {
     my $filepath = $_;
+    chomp ($filepath);
+    $filepath =~ s/^\///;
     my $url = "https://raw.github.com/".$filepath;
-    $url =~ s/\/tree\///;
+    $url =~ s/\/tree\/(.*?)\//\/master\//;
     my $res = $ua->get($url);
-    my $rt = $res->as_string();
+    my $rt = $res->decoded_content;
     my $tempfile = File::Temp->new();
     my $tempfileName = $tempfile->filename;
     open (my $out, ">$tempfileName");
     print $out $rt;
     close ($out);
-    #Handle spelling mistakes
+    #Skip tests
+    if ($filepath =~ /obsolete/i) {
+	print "skipping $filepath\n";
+	next;
+    }
     if ($filepath =~ /\/README.(txt|m|p).*?/i && check_common($tempfileName, $rt)) {
-        print "spelling: ".$url;
+        print "spelling: ".$url."\n";
     }
     if ($filepath =~ /\.php/i && check_php($tempfileName, $rt)) {
-        print "php: ".$url;
+        print "php: ".$url."\n";
     }
     if ($rt =~ /\#\!\/bin\/.*?sh/i && check_shell($tempfileName, $rt)) {
-        print "shell ".$url;
+        print "shell ".$url."\n";
     }
     if ($filepath =~ /\.py/i && check_py($tempfileName, $rt)) {
-        print "py ".$url;
+        print "py ".$url."\n";
     }
     if ($filepath =~ /\.go/i && check_go($tempfileName, $rt)) {
-        print "go ".$url;
+        print "go ".$url."\n;"
     }
 }
