@@ -558,6 +558,7 @@ sub preserve_case {
 }
 
 sub check_common {
+    my $filename = shift @_;
     my $text = shift @_;
     # Holds the failures we saw
     my %err;
