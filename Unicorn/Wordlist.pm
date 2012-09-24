@@ -541,6 +541,7 @@ my %bypablo = ( "syncronous" => "synchronous",
 %common = ( %common, %common_cpan , %bypablo);
 
 sub fix_text {
+    my $file = shift @_;
     my $text = shift @_;
     foreach my $k  (keys %common) {
 	if ($text =~ s/\b($k)\b/preserve_case($1,$common{$k})/egi) {
