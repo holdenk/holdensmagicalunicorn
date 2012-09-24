@@ -2,6 +2,7 @@ package Unicorn::Django;
 use strict;
 
 sub check_django_settings {
+    my $filename = shift @_;
     my $rt = shift @_;
     if ($rt =~ /django/) {
 	#Now days we want full names like django.db.backends.sqlite3
@@ -17,6 +18,7 @@ sub check_django_settings {
     return 0;
 }
 sub fix_django_settings {
+    my $filename = shift @_;
     my $rt = shift @_;
     if ($rt =~ /django/) {
 	#Now days we want full names like django.db.backends.sqlite3
