@@ -1,0 +1,8 @@
+/* top K repos for languages the unicorn can use by number of pushes */
+SELECT repository_name, count(repository_name) as pushes, repository_description, repository_url
+FROM [githubarchive:github.timeline]
+WHERE type="PushEvent"
+AND (repository_language="Ruby" OR repository_language="Shell" OR repository_language="Perl" OR repository_language="C++" OR repository_language="PHP" OR repository_language="Scala")
+GROUP BY repository_name, repository_description, repository_url
+ORDER BY pushes DESC
+LIMIT 100
