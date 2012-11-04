@@ -3,7 +3,7 @@ use strict;
 use File::Basename;
 use File::Slurp qw (slurp);
 
-my $spatchexec = "spatch";
+my $spatchexec = "spatch-php";
 my $phpFunctionDir = "./php_functions/";
 my $spatchdir = "php_spatches";
 
