@@ -1,4 +1,4 @@
-#Test the shell script thing
+#Test the php script thing
 use Test::More tests => 4;
 use File::Temp;
 use Unicorn::PHP qw(fix_php check_php);

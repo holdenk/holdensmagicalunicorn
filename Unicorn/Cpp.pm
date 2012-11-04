@@ -3,12 +3,26 @@ use strict;
 use File::Basename;
 use File::Slurp qw (slurp);
 
-my $spatchexec = "spatch";
+my $spatchexec = "/usr/bin/spatch";
 my $spatchdir = "cpp_semantic";
 
 sub check_cpp {
-    if (fast_check_cpp($file,$rt)) {
+    my $file = shift @_;
+    my $rt = shift @_;
+    return fast_check_cpp($file,$rt);
+}
+
+sub fix_cpp {
+    my $file = shift @_;
+    #Run the C++ spatches
+    opendir (my $spatch_files, "$spatchdir") || "can't opendir $!\n";
+    while (my $spatch_file = readdir($spatch_files)) {
+	chomp ($spatch_file);
+	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.spatch$/) {
+	    `$spatchexec --sp-file $spatchdir/$spatch_file $file`;
+	}
     }
+    closedir($spatch_files);
 }
 
 sub fast_check_cpp {
@@ -23,7 +37,12 @@ sub fast_check_cpp {
     if ($rt =~ /[\<\>]\?/) {
 	return 1;
     }
-    if ($rt =~ /memcpy\(\w+\,\s*0\s*,\s*0\)/) {
+    if ($rt =~ /memcpy\(\w+\,\s*(0|NULL)\s*,\s*0\)/) {
 	return 1;
     }
 }
+
+use base 'Exporter';
+our @EXPORT = qw{check_cpp fix_cpp};
+
+1;
