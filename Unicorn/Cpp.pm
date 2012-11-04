@@ -18,8 +18,9 @@ sub fix_cpp {
     opendir (my $spatch_files, "$spatchdir") || "can't opendir $!\n";
     while (my $spatch_file = readdir($spatch_files)) {
 	chomp ($spatch_file);
-	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.spatch$/) {
-	    `$spatchexec --sp-file $spatchdir/$spatch_file $file`;
+	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.cocci$/) {
+	    print "running spatch $spatchdir/$spatch_file";
+	    `$spatchexec --in-place --sp-file $spatchdir/$spatch_file $file`;
 	}
     }
     closedir($spatch_files);
