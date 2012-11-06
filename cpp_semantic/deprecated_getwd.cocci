@@ -6,4 +6,3 @@ int y;
 char x[y];
 - getwd(x);
 + getcwd(x,y);
-@@

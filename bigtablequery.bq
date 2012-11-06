@@ -1,0 +1,8 @@
+/* top 15000 repos for C++ by number of pushes */
+SELECT repository_name, count(repository_name) as pushes, repository_description, repository_url
+FROM [githubarchive:github.timeline]
+WHERE type="PushEvent"
+AND (repository_language="C++")
+GROUP BY repository_name, repository_description, repository_url
+ORDER BY pushes DESC
+LIMIT 15000;

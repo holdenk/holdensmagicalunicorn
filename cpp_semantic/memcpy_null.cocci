@@ -6,5 +6,5 @@
 function memcpy;
 identifier x;
 @@
--memcpy(x, NULL, 0)
-+
+-memcpy(x, 0, 0);
++x;

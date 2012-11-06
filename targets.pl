@@ -35,7 +35,7 @@ foreach my $query (@queries) {
 	my $response = $search->search();
 	
 	foreach my $result ( @{$response->results} ) {
-	    print $result->Title, " -> ", $result->Url, "\n";
+	    print $result->Url, "\n";
 	}
 	$offset += $inc;
     }
