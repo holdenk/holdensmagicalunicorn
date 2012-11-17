@@ -11,6 +11,8 @@ use Unicorn::Errorcheck qw{check_php fix_php check_py fix_py check_go fix_go che
 use Unicorn::Blacklist qw{ ok_to_update };
 use Unicorn::Settings qw{ settings }:
 
+require "shared_fix.pl";
+
 my $p = Pithub->new;
 
 my $c = 0;
@@ -46,13 +48,9 @@ while (my $l = <>) {
 sub handle_url {
     my $url = shift @_;
     print "looking at $url\n";
-    if ($url =~ /http.*\/(.*?)\/(.*?)\/(raw\/|)(master|development|\w+)\/(.*)/) {
+    if ($url =~ /http.*\/.*github\.com\/(.*?)\/(.*?)(\/|$).*/) {
         my $ruser = $1;
         my $repo = $2;
-        my $file = $4;
-        print "u:".$ruser."\n";
-        print "r:".$repo."\n";
-        print "f:".$file."\n";
         my $result = $p->repos->get( user => $ruser , repo => $repo);
         my $traverse = 0;
         #Do we need to go up a level?
@@ -132,85 +130,4 @@ sub generate_twitter_msg {
         $message = "Update to ".$pname." see pull request [LINK]";
     }
     return $message;
-}
-sub handle_files {
-    print "handle_files called\n";
-    my @files = @_;
-    my @handlers = (handle_group("Fixing typos in README",qr/\/README(\.txt|\.rtf|\.md|\.pm|\.m\w+)$/,\&check_common,\&fix_text),
-                    handle_group("Fixing old PHP calls",qr/\.php$/,\&check_php,\&fix_php),
-                    handle_group("Updating shell scripts",qr/\/\w(\.sh|\.bash|)$/,\&check_shell,\&fix_shell),
-                    handle_group("Fixing deprecated django",qr/\.py$/,\&check_py,\&fix_py),
-                    handle_group_cmd("Fixing go formatting",qr/\.go$/,\&check_go,\&fix_go));
-    my @handler_names = ("typos","deprecated php","portable shell","deprecated django","go fix");
-    print "have ".$#files." and ".$#handlers." to use\n";
-    my $i = 0;
-    my $short_msg = "Fix ";
-    my @changes = ();
-    while ($i < $#handlers+1) {
-        print "running $i\n";
-        print "Running handler $i / ".$handler_names[$i]."\n";
-        my $r = $handlers[$i](@files);
-        if ($r) {
-            push @changes, $handler_names[$i];
-        }
-        $i++;
-    }
-    return @changes;
-}
-sub handle_group {
-    my $git_message = shift @_;
-    my $gate_regex = shift @_;
-    my $gate_function = shift @_;
-    my $fix_function = shift @_;
-    return sub {
-        my $changes = 0;
-        my @files = @_;
-        foreach my $file (@files) {
-            if ($file !~ /\/\.git\// && $file =~ $gate_regex) {        
-                open (my $in, "<", "$file") or die "Unable to open $file";
-                my $t = do { local $/ = <$in> };
-                close($in);
-                #Is there a spelling mistake?
-                if ($gate_function->($file, $t)) {
-                    open (my $out, ">", "$file") or die "Unable to open $file";
-                    print $out $fix_function->($file, $t);
-                    close ($out);
-                }                
-            }
-        }
-        #Determine if we have made any difference
-        `cd foo/*;git diff --exit-code`;
-        if ($? != 0) {
-            #Yup
-            `cd foo/*;git commit -a -m \"$git_message\";git push; sleep 1; git push`;
-            return 1;
-        }
-        #Nope no changes
-        return 0;
-    }
-}
-
-sub handle_group_cmd {
-    my $git_message = shift @_;
-    my $gate_regex = shift @_;
-    my $gate_function = shift @_;
-    my $fix_function = shift @_;
-    return sub {
-        my $changes = 0;
-        my @files = @_;
-        foreach my $file (@files) {
-            if ($file !~ /\/\.git\// && $file =~ $gate_regex) {        
-                $fix_function->($file);
-            }
-        }
-        #Determine if we have made any difference
-        `cd foo/*;git diff --exit-code`;
-        if ($? != 0) {
-            #Yup
-            `cd foo/*;git commit -a -m \"$git_message\";git push; sleep 1; git push`;
-            return 1;
-        }
-        #Nope no changes
-        return 0;
-    }
 }

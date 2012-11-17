@@ -15,7 +15,7 @@ sub fix_go {
     return 1;
 }
 sub check_cpp {
-    return 0;
+    return 1;
 }
 sub fix_cpp {
     my $file = shift @_;

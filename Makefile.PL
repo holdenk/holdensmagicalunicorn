@@ -17,6 +17,7 @@ WriteMakefile
 	 'Text::SpellChecker' => 0,
 	 'Pithub' => 0,
 	 'YAML::Any' => 0,
+	 'Slurp' => 0,
       },
    'linkext'      => { LINKTYPE => '' }, # no link needed
    'dist'         =>

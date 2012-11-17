@@ -21,7 +21,7 @@ sub fix_cpp {
 	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.cocci$/) {
 	    print "running spatch $spatchdir/$spatch_file $file\n";
 	    print "got:\n";
-	    print `$spatchexec --in-place --sp-file $spatchdir/$spatch_file $file`;
+	    print `$spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file`;
 	}
     }
     closedir($spatch_files);

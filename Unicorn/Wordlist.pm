@@ -545,7 +545,7 @@ sub fix_text {
     my $text = shift @_;
     foreach my $k  (keys %common) {
 	if ($text =~ s/\b($k)\b/preserve_case($1,$common{$k})/egi) {
-	    print "Swapped on $k update to $common{$k}\n";
+	    1;
 	}
     }
     return $text;
@@ -569,7 +569,6 @@ sub check_common {
     foreach my $w ( @words ) {
 	my $lcw = lc( $w );
 	if ( exists $common{ $lcw } ) {
-	    print "Error was $lcw\n";
 	    return 1;
 	}
     }
