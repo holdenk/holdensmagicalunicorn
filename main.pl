@@ -64,13 +64,18 @@ sub handle_possible_repo {
 sub setup_output {
     my $hosts;
     open ($hosts, "hosts.txt");
+    print "Clean up old distro tarball\n";
+    `rm magic.tar.bz2; rm magic.tar`;
+    print "Making new distro tarball\n";
+    `tar -cf ./magic.tar ./; tar -Af ./magic.tar ../settings.yml`;
+    print "Compressing\n";
+    `bzip2 magic.tar`;
     while (my $hostline = <$hosts>) {
 	my @murh = split(/\:/,$hostline);
 	my $hostname = $murh[0];
 	my $pwd = $murh[1];
-	`rm magic.tar;tar -cfa ./magic.tar.bz2 ./; tar -Aa ./magic.tar.bz2 ../`;
 	print "Updating host $hostname\n";
-	`scp magic.tar $hostname:~/`;
+	`scp magic.tar.bz2 $hostname:~/`;
 	my ($child_out,$child_in);
 	open2($child_in, $child_out, "ssh -t -t $hostname");
 	#hack
