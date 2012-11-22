@@ -6,10 +6,11 @@ use strict;
 use warnings;
 use IO::Select;
 use IPC::Open2;
+$|=1;
 
 my $remoteoutselect = IO::Select->new();
 my $remoteinselect = IO::Select->new();
-my $badrepos;
+my ($badrepos, $fixstuff);
 
 sub main() {
     setup_output();
@@ -29,27 +30,22 @@ sub main() {
 	    handle_line($line);
 	}
     }
+    my @ready;
     # Read the input back from the hosts as it becomes available
-    while (my @ready = $remoteinselect->can_read(60)) {
-	if (@ready == ()) {
-	    break;
-	}
+    while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
 	for my $fh (@ready) {
 	    handle_possible_repo(<$fh>);
 	}
     }
     # Tell all of the children we are done
-    @outputhandles = $remoteoutselect->can_write;
+    my @outputhandles = $remoteoutselect->can_write;
     for my $fh (@outputhandles) {
 	print $fh "quitquitquit\n";
 	sleep 5;
 	print $fh "exit\n";
     }
     # Read any remaining input back from the hosts
-    while (my @ready = $remoteinselect->can_read(60)) {
-	if (@ready == ()) {
-	    break;
-	}
+    while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
 	for my $fh (@ready) {
 	    handle_possible_repo(<$fh>);
 	}
@@ -69,14 +65,17 @@ sub setup_output {
     my $hosts;
     open ($hosts, "hosts.txt");
     while (my $hostline = <$hosts>) {
-	@murh = split(/\:/,$hostline);
+	my @murh = split(/\:/,$hostline);
 	my $hostname = $murh[0];
 	my $pwd = $murh[1];
+	`rm magic.tar;tar -cfa ./magic.tar.bz2 ./; tar -Aa ./magic.tar.bz2 ../`;
+	print "Updating host $hostname\n";
+	`scp magic.tar $hostname:~/`;
 	my ($child_out,$child_in);
-	open2($child_out, $child_in, "ssh $hostname");
+	open2($child_in, $child_out, "ssh -t -t $hostname");
 	#hack
-	sleep 10;
-	print $child_out "mkdir $pwd;cd $pwd;cp ~/mymagic.tar ./;tar -xvf mymagic.tar;perl verify.pl";
+	sleep 1;
+	print $child_out "mkdir $pwd;cd $pwd;cp ~/mymagic.tar ./;tar -xvf mymagic.tar;export PATH=$pwd/bin:\$PATH;perl verify.pl";
 	$remoteoutselect->add($child_out);
 	$remoteinselect->add($child_in);
     }

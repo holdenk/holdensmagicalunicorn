@@ -3,7 +3,7 @@ use strict;
 use File::Basename;
 use File::Slurp qw (slurp);
 
-my $spatchexec = "spatch";
+my $spatchexec = "cpp_spatch";
 my $spatchdir = "cpp_semantic";
 
 sub check_cpp {
