@@ -16,10 +16,11 @@ sub main() {
     setup_output();
     my ($bingin,$ghin,$bqin);
 
-    open ($bingin , "perl targets.pl\| tee bingtargets |");
-    open ($ghin, "perl targets2.pl\| tee ghtargets |");
-    open ($bqin, "perl bigquerytargets.pl\| tee bqtargets|");
-    open ($fixstuff, "|perl fix_pandas.pl\| tee fixdata");
+    open ($bingin , "perl targets.pl\| tee /tmp/mbingtargets |");
+    open ($ghin, "perl targets2.pl\| tee /tmp/ghtargets |");
+    open ($bqin, "perl bigquerytargets.pl\| tee /tmp/bqtargets|");
+    # We only run the fixing on one local machine
+    open ($fixstuff, "|perl fix_pandas.pl\| tee /tmp/fixdata");
     my $s = IO::Select->new();
     $s->add($bingin);
     $s->add($ghin);
@@ -67,7 +68,7 @@ sub setup_output {
     print "Clean up old distro tarball\n";
     `rm magic.tar.bz2; rm magic.tar`;
     print "Making new distro tarball\n";
-    `tar -cf ./magic.tar ./; tar -Af ./magic.tar ../settings.yml`;
+    `tar --exclude-vcs  -cf ./magic.tar ./; tar -rf ./magic.tar ../settings.yml`;
     print "Compressing\n";
     `bzip2 magic.tar`;
     while (my $hostline = <$hosts>) {
