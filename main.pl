@@ -72,6 +72,10 @@ sub setup_output {
     print "Compressing\n";
     `bzip2 magic.tar`;
     while (my $hostline = <$hosts>) {
+	#Fuck comments
+	if ($hostline =~ /^\#/) {
+	    next;
+	}
 	my @murh = split(/\:/,$hostline);
 	my $hostname = $murh[0];
 	my $pwd = $murh[1];

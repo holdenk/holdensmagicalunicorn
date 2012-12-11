@@ -9,7 +9,7 @@ use strict;
 use Unicorn::Wordlist qw{fix_text check_common};
 use Unicorn::Errorcheck qw{check_php fix_php check_py fix_py check_go fix_go check_cpp fix_cpp check_shell fix_shell};
 use Unicorn::Blacklist qw{ ok_to_update };
-use Unicorn::Settings qw{ settings }:
+use Unicorn::Settings qw{ settings };
 
 require "shared_fix.pl";
 
@@ -17,10 +17,10 @@ my $p = Pithub->new;
 
 my $c = 0;
 my $settings = settings();
-$consumer_key = $settings->{"twitter.consumer_key"};
-$consumer_secret = $settings->{"twitter.consumer_secret"};
-$user = $settings->{"github.user"};
-$token = $settings->{"github.token"};
+my $consumer_key = $settings->{"twitter.consumer_key"};
+my $consumer_secret = $settings->{"twitter.consumer_secret"};
+my $user = $settings->{"github.user"};
+my $token = $settings->{"github.token"};
 print "using ck $consumer_key / secret $consumer_secret\n";
 my $nt = Net::Twitter->new(
     traits   => [qw/OAuth API::REST/],
@@ -69,15 +69,15 @@ sub handle_url {
             return 0;
         }
         #Ok dokey lets try and fork this business
-        print "trying to fork!\n";
+        print "trying to fork repo $repo from $ruser\n";
         my $f = Pithub::Repos::Forks->new(token => $token);
-        my $result = $f->create( user => $ruser, repo => $repo);
+        my $result = $f->create( user => $ruser, repo => $repo) or die "Forking failed $!\n";
         my $clone_url = $result->content->{ssh_url};
         my $upstream_url = $result->content->{parent}->{ssh_url};
         my $master_branch = $result->content->{parent}->{master_branch} || "master";
         print "using master branch: $master_branch\n";
         #Oh hey lets merge the latest business to eh (just in case we have an old fork)
-        `rm -rf foo && mkdir -p foo && cd foo && git clone "$clone_url" && cd * && git remote add upstream "$upstream_url" && git fetch upstream && git merge upstream/$master_branch && git push`;
+        print `rm -rf foo && mkdir -p foo && cd foo && git clone "$clone_url" && cd * && git remote add upstream "$upstream_url" && git fetch upstream && git merge upstream/$master_branch && git push`;
         print "Did the sexy bit!\n";
         #Get the files
         my @all_files;
@@ -104,6 +104,7 @@ sub handle_url {
                                          base => $master_branch,
                                          head => $master_branch});
             print "Dump".Dumper($result->content);
+	    my $link = "lols";
             exit();
             #Post to twitter
             $twitter_msg =~ s/\[LINK\]$/$link/;

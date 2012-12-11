@@ -19,6 +19,7 @@ WriteMakefile
 	 'YAML::Any' => 0,
 	 'Slurp' => 0,
 	 'Net::SSH' => 0,
+	 'Data::Dumper' => 0,
       },
    'linkext'      => { LINKTYPE => '' }, # no link needed
    'dist'         =>
