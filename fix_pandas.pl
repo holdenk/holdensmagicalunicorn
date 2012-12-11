@@ -76,6 +76,11 @@ sub handle_url {
         my $upstream_url = $result->content->{parent}->{ssh_url};
         my $master_branch = $result->content->{parent}->{master_branch} || "master";
         print "using master branch: $master_branch\n";
+	if (!$clone_url) {
+	    print "Error, no clone url\n";
+	    print Dump($result);
+	    next;
+	}
         #Oh hey lets merge the latest business to eh (just in case we have an old fork)
         print `rm -rf foo && mkdir -p foo && cd foo && git clone "$clone_url" && cd * && git remote add upstream "$upstream_url" && git fetch upstream && git merge upstream/$master_branch && git push`;
         print "Did the sexy bit!\n";
