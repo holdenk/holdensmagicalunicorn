@@ -46,7 +46,7 @@ sub handle_group {
         if ($? != 0) {
 	    print "Changes for $git_message\n";
             #Yup
-            `cd foo/*;git commit -a -m \"$git_message\";`;
+            `cd foo/*;git commit -a -m \"$git_message.\";`;
             return $git_message;
         } else {
 	    print "No changes for $git_message\n";
