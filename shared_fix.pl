@@ -1,4 +1,8 @@
+use strict;
+use warnings;
+
 sub handle_files {
+    print "Handling files\n";
     my @files = @_;
     my @handlers = (handle_group("Fixing typos in README",qr/\/README(\.txt|\.rtf|\.md|\.pm|\.m\w+)$/,\&check_common,\&fix_text),
                     handle_group("Fixing old PHP calls",qr/\.php$/,\&check_php,\&fix_php),
@@ -9,7 +13,6 @@ sub handle_files {
 		    handle_group("Fixing scala",qr/\.scala$/,\&check_scala,\&fix_scala),
                     handle_group_cmd("Fixing go formatting",qr/\.go$/,\&check_go,\&fix_go));
     my $i = 0;
-    my $short_msg = "Fix ";
     my @changes = ();
     while ($i < $#handlers+1) {
         my $r = $handlers[$i](@files);
