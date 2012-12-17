@@ -33,6 +33,9 @@ $nt->access_token_secret();
 my $ua = new LWP::UserAgent;
 print "Hello!\n";
 print "Connecting to github!\n";
+my $u = Pithub::Users->new( token => $token );
+my $result = $u->get;
+print Dumper($result);
 print "Reading input\n";
 while (my $l = <>) {
     if ($l =~ /github\.com\/(.*?)\s*$/) {
@@ -78,7 +81,7 @@ sub handle_url {
         print "using master branch: $master_branch\n";
 	if (!$clone_url) {
 	    print "Error, no clone url\n";
-	    print Dump($result);
+	    print Dumper($result);
 	    next;
 	}
         #Oh hey lets merge the latest business to eh (just in case we have an old fork)
@@ -95,6 +98,7 @@ sub handle_url {
         #Now we iterate through each of the processors so the git commit messages are grouped logically
         print "handling the files\n";
         my @changes = handle_files(@all_files);
+	`cd foo && cd * && git push`;
         #Did we change anything?
         if ($#changes > 0) {
             #Yes!
@@ -102,7 +106,7 @@ sub handle_url {
             my $twitter_msg = generate_twitter_msg(@changes);
             #Make pull
             my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
-            my $result = $pu->create(user => $user,
+            my $result = $pu->create(user => $ruser,
                                      repo => $repo,
                                      data => {
                                          title => "Pull request to a fix things",

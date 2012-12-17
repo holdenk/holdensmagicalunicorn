@@ -13,8 +13,6 @@ my $token = $settings->{"bing.token"};
 my $user = $settings->{"bing.user"};
 my $appid = $settings->{"bing.appid"};
 
-print "using token:$token user:$user appid:$appid\n";
-
 my $inc = 10;
 my $offset = 0;
 my $max = 100;
@@ -24,6 +22,7 @@ my @queries = ("readme.md site:raw.github.com",
 	       "readme.pod site:raw.github.com",
 	       "hmac php site:raw.github.com");
 foreach my $query (@queries) {
+
     while ($offset < $max) {
 	my $search = Bing::Search->new();
 	$search->AppId($appid);
