@@ -8,14 +8,13 @@ sub handle_files {
 		    handle_group("Fixing c++",qr/\.cpp$/,\&check_cpp,\&fix_cpp),
 		    handle_group("Fixing scala",qr/\.scala$/,\&check_scala,\&fix_scala),
                     handle_group_cmd("Fixing go formatting",qr/\.go$/,\&check_go,\&fix_go));
-    my @handler_names = ("typos","deprecated php","portable shell","deprecated django","go fix");
     my $i = 0;
     my $short_msg = "Fix ";
     my @changes = ();
     while ($i < $#handlers+1) {
         my $r = $handlers[$i](@files);
         if ($r) {
-            push @changes, $handler_names[$i];
+            push @changes, $r;
         }
         $i++;
     }
@@ -45,12 +44,15 @@ sub handle_group {
         #Determine if we have made any difference
         `cd foo/*;git diff --exit-code`;
         if ($? != 0) {
+	    print "Changes for $git_message\n";
             #Yup
             `cd foo/*;git commit -a -m \"$git_message\";`;
-            return 1;
-        }
-        #Nope no changes
-        return 0;
+            return $git_message;
+        } else {
+	    print "No changes for $git_message\n";
+	    #Nope no changes
+	    return 0;
+	}
     }
 }
 
