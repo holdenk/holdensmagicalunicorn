@@ -29,6 +29,7 @@ sub handle_group {
     my $gate_function = shift @_;
     my $fix_function = shift @_;
     return sub {
+	print "Handling the $git_message group\n";
         my $changes = 0;
         my @files = @_;
         foreach my $file (@files) {
