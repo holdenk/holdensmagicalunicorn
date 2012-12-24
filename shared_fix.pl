@@ -38,9 +38,7 @@ sub handle_group {
                 close($in);
                 #Is there a spelling mistake?
                 if ($gate_function->($file, $t)) {
-                    open (my $out, ">", "$file") or die "Unable to open $file";
-                    print $out $fix_function->($file, $t);
-                    close ($out);
+		    $fix_function->($file, $t);
                 }                
             }
         }
