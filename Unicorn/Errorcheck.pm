@@ -3,6 +3,7 @@ use strict;
 use Unicorn::PHP qw( check_php fix_php);
 use Unicorn::Shell qw( check_shell fix_shell);
 use Unicorn::Django qw( check_django_settings fix_django_settings );
+use Unicorn::Cpp qw( check_cpp fix_cpp);
 
 sub check_go {
     my $file = shift @_;
@@ -13,14 +14,6 @@ sub fix_go {
     my $filename = shift @_;
     `gofix "$filename"`;
     return 1;
-}
-sub check_cpp {
-    return 1;
-}
-sub fix_cpp {
-    my $file = shift @_;
-    my $rt = shift @_;
-    return $rt;
 }
 
 sub check_py {
