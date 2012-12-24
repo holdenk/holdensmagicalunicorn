@@ -543,12 +543,17 @@ my %bypablo = ( "syncronous" => "synchronous",
 sub fix_text {
     my $file = shift @_;
     my $text = shift @_;
+    my $oldtext = $text;
     foreach my $k  (keys %common) {
 	if ($text =~ s/\b($k)\b/preserve_case($1,$common{$k})/egi) {
 	    1;
 	}
     }
-    return $text;
+    if ($oldtext != $text) {
+	open (my $output, ">$file");
+	print $output $text;
+	close($output);
+    }
 }
 
 sub preserve_case {
