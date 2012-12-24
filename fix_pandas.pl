@@ -106,12 +106,13 @@ sub handle_url {
             my $twitter_msg = generate_twitter_msg(@changes);
             #Make pull
             my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
-            my $result = $pu->create(user => $user,
+            my $result = $pu->create(user => $ruser,
                                      repo => $repo,
                                      data => {
                                          title => "Pull request to a fix things",
+					 body => $pull_msg,
                                          base => $master_branch,
-                                         head => $master_branch});
+                                         head => "$user:".$master_branch});
             print "Dump".Dumper($result->content);
 	    my $link = "lols";
             exit();
