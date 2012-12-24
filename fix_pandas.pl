@@ -106,7 +106,7 @@ sub handle_url {
             my $twitter_msg = generate_twitter_msg(@changes);
             #Make pull
             my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
-            my $result = $pu->create(user => $ruser,
+            my $result = $pu->create(user => $user,
                                      repo => $repo,
                                      data => {
                                          title => "Pull request to a fix things",
