@@ -35,7 +35,6 @@ print "Hello!\n";
 print "Connecting to github!\n";
 my $u = Pithub::Users->new( token => $token );
 my $result = $u->get;
-print Dumper($result);
 print "Reading input\n";
 while (my $l = <>) {
     if ($l =~ /github\.com\/(.*?)\s*$/) {
@@ -102,7 +101,7 @@ sub handle_url {
         #Did we change anything?
         if ($#changes > 0) {
             #Yes!
-            my $pull_msg = generate_pull_msg(@changes);
+            my $pull_msg = generate_pull_msg($ruser, $repo, @changes);
             my $twitter_msg = generate_twitter_msg(@changes);
             #Make pull
             my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
@@ -113,11 +112,10 @@ sub handle_url {
 					 body => $pull_msg,
                                          base => $master_branch,
                                          head => "$user:".$master_branch});
-            print "Dump".Dumper($result->content);
-	    my $link = "lols";
-            exit();
+	    my $link = $result->content->{_links}->{html}->{href};
             #Post to twitter
             $twitter_msg =~ s/\[LINK\]$/$link/;
+	    $nt->update($twitter_msg);
         }
     }
 }
@@ -128,9 +126,12 @@ sub generate_pull_msg {
     return $pull_msg;
 }
 sub generate_twitter_msg {
-    my ($pname,$link,@msgs) = @_;
+    my ($ruser, $pname,@msgs) = @_;
     my $msgs_txt = join(' ',@msgs);
-    my $message = "Fixing: ".$msgs_txt." in ".$pname." see pull request [LINK]";
+    my $message = "Fixing: ".$msgs_txt." in ".$ruser.":".$pname." see pull request [LINK]";
+    if (length($message) > 120) {
+	$message = "Fixing: ".$msgs_txt." in ".$pname." see pull request [LINK]";
+    }
     if (length($message) > 120) {
         $message =  "Fixing: ".$msgs_txt." in ".$pname." see [LINK]";
     }
@@ -139,6 +140,13 @@ sub generate_twitter_msg {
     }
     if (length($message) > 120) {
         $message = "Update to ".$pname." see pull request [LINK]";
+    }
+    if (length($message) > 120) {
+	$message = "New pull request [LINK] omnomnom :)";
+    }
+    # Special case for the warmup
+    if ($ruser =~ /holdenkarau/) {
+	$message = "Warming up:".$message;
     }
     return $message;
 }
