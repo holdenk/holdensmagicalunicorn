@@ -8,7 +8,6 @@ sub handle_files {
                     handle_group("Fixing old PHP calls",qr/\.php$/,\&check_php,\&fix_php),
                     handle_group("Updating shell scripts",qr/\/\w(\.sh|\.bash|)$/,\&check_shell,\&fix_shell),
                     handle_group("Fixing deprecated django",qr/\.py$/,\&check_py,\&fix_py),
-		    handle_group("Fixing c",qr/\.c$/,\&check_cpp,\&fix_cpp),
 		    handle_group("Fixing c++",qr/\.cpp$/,\&check_cpp,\&fix_cpp),
 		    handle_group("Fixing scala",qr/\.scala$/,\&check_scala,\&fix_scala),
                     handle_group_cmd("Fixing go formatting",qr/\.go$/,\&check_go,\&fix_go));
