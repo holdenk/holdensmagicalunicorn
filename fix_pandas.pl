@@ -21,6 +21,7 @@ my $consumer_key = $settings->{"twitter.consumer_key"};
 my $consumer_secret = $settings->{"twitter.consumer_secret"};
 my $user = $settings->{"github.user"};
 my $token = $settings->{"github.token"};
+my $mode = $settings->{"mode"};
 print "using ck $consumer_key / secret $consumer_secret\n";
 my $nt = Net::Twitter->new(
     traits   => [qw/OAuth API::REST/],
