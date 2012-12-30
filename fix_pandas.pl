@@ -125,7 +125,7 @@ sub handle_url {
 		$nt->update($twitter_msg);
 	    } else {
 		# Fetch the upstream so we can generate a diff against it for the reviewer
-		`git fetch upstream master;git branch upstream/master upstream_master;git push origin upstream_master`;
+		`cd foo; cd *; git fetch upstream master;git branch upstream/master upstream_master;git push origin upstream_master`;
 		my $review_url = "https://github.com/$ruser/$repo/compare/master…upstream_master";
 		print "review url $review_url\n";
 		print $url_out "$review_url\n";
