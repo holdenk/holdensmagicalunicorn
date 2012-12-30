@@ -16,6 +16,7 @@ my ($badrepos, $fixstuff);
 sub main() {
     setup_output();
     my ($bingin,$ghin,$bqin) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
+    print "($bingin,$ghin,$bqin)\n";
 
     open ($bingin , "perl targets.pl|");
     open ($ghin, "perl targets2.pl|");
@@ -29,9 +30,14 @@ sub main() {
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
 	    print "reading from $fh\n"; 
-	    my $line = $fh->getline;
-	    print "line is $line";
-	    handle_line($line);
+	    my $line;
+	    if (defined ($line = $fh->getline)) {
+		print "line is $line";
+		handle_line($line);
+	    } else {
+		print "removing file handle $fh\n";
+		$s->remove($fh);
+	    }
 	    sleep 1;
 	}
     }
