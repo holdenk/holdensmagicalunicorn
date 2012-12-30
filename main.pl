@@ -29,11 +29,9 @@ sub main() {
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
 	    my $line = $fh->getline;
-	    if ($line != undef) {
-		print "line is $line";
-		handle_line($line);
-		sleep 1;
-	    }
+	    print "line is $line";
+	    handle_line($line);
+	    sleep 1;
 	}
     }
     my @ready;
