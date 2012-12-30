@@ -15,7 +15,7 @@ my ($badrepos, $fixstuff);
 
 sub main() {
     setup_output();
-    my ($bingin,$ghin,$bqin);
+    my ($bingin,$ghin,$bqin) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
 
     open ($bingin , "perl targets.pl|");
     open ($ghin, "perl targets2.pl|");
@@ -28,6 +28,7 @@ sub main() {
     $s->add($bqin);
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
+	    print "reading from $fh\n"; 
 	    my $line = $fh->getline;
 	    print "line is $line";
 	    handle_line($line);
