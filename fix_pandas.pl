@@ -107,9 +107,9 @@ sub handle_url {
         if ($#changes > 0) {
 	    # Yes!
 	    # Push without review or require human review?
+	    my $pull_msg = generate_pull_msg($ruser, $repo, @changes);
+	    my $twitter_msg = generate_twitter_msg(@changes);
 	    if ($mode eq "autopush") {
-		my $pull_msg = generate_pull_msg($ruser, $repo, @changes);
-		my $twitter_msg = generate_twitter_msg(@changes);
 		#Make pull
 		my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
 		my $result = $pu->create(user => $ruser,
@@ -126,9 +126,9 @@ sub handle_url {
 	    } else {
 		# Fetch the upstream so we can generate a diff against it for the reviewer
 		`cd foo; cd *; git fetch upstream master;git branch upstream_master upstream/master;git push origin upstream_master`;
-		my $review_url = "https://github.com/$ruser/$repo/compare/master…upstream_master";
+		my $review_url = "https://github.com/$user/$repo/compare/master…upstream_master";
 		print "review url $review_url\n";
-		print $url_out "$review_url\n";
+		print $url_out "$review_url,$pull_msg,$twitter_msg,$ruser\n";
 	    }
         }
     }

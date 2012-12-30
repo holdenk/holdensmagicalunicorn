@@ -10,7 +10,7 @@ print "<h3>Please review the following Github Pull requests.</h3>
 my $k = 0;
 while ($k < 11) {
     $k++;
-    print "<p>".$k.". Should we approve <a href=\"\${diff_url".$k."}\">\${diff_url".$k."}</a> with a msg of \${msg".$k."}</p>
+    print "<p>".$k.". Should we approve <a href=\"\${diff_url".$k."}\">\${diff_url".$k."}</a> with a msg of \${msg".$k."} to github \${user".$k."}</p>
 <table cellspacing=\"4\" cellpadding=\"0\" border=\"0\">
     <tbody>
         <tr>
