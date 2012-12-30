@@ -5,6 +5,7 @@
 use strict;
 use warnings;
 use IO::Select;
+use IO::Handle;
 use IPC::Open2;
 $|=1;
 
@@ -28,9 +29,11 @@ sub main() {
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
 	    my $line = $fh->getline;
-	    print "line is $line";
-	    handle_line($line);
-	    sleep 1;
+	    if ($line != undef) {
+		print "line is $line";
+		handle_line($line);
+		sleep 1;
+	    }
 	}
     }
     my @ready;
@@ -84,7 +87,7 @@ sub setup_output {
 	my $pwd = $murh[1];
 	print "Updating host $hostname\n";
 	`scp magic.tar.bz2 $hostname:~/`;
-	my ($child_out,$child_in);
+	my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
 	open2($child_in, $child_out, "ssh -t -t $hostname");
 	#hack
 	sleep 1;
@@ -93,7 +96,7 @@ sub setup_output {
 	$remoteinselect->add($child_in);
     }
     # Local mode :)
-    my ($child_out,$child_in);
+    my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
     open2($child_in, $child_out, "perl verify.pl");
     $remoteoutselect->add($child_out);
     $remoteinselect->add($child_in);
