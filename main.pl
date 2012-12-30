@@ -25,7 +25,7 @@ sub main() {
     $s->add($bingin);
     $s->add($ghin);
     $s->add($bqin);
-    while (my @ready = $s->can_read) {
+    while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
 	    my $line = <$fh>;
 	    print "line is $line";
