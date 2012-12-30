@@ -27,7 +27,7 @@ sub main() {
     $s->add($bqin);
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
-	    my $line = <$fh>;
+	    my $line = $fh->getline;
 	    print "line is $line";
 	    handle_line($line);
 	    sleep 1;
@@ -37,15 +37,15 @@ sub main() {
     # Read the input back from the hosts as it becomes available
     while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
 	for my $fh (@ready) {
-	    handle_possible_repo(<$fh>);
+	    handle_possible_repo($fh->getline);
 	}
     }
     # Tell all of the children we are done
     my @outputhandles = $remoteoutselect->can_write;
     for my $fh (@outputhandles) {
-	print $fh "quitquitquit\n";
+	$fh->print("quitquitquit\n");
 	sleep 5;
-	print $fh "exit\n";
+	$fh->print("exit\n");
     }
     # Read any remaining input back from the hosts
     while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
@@ -109,7 +109,7 @@ sub handle_line {
 	my @ready = $remoteoutselect->can_write(1);
 	my $j = int(rand($#ready));
 	my $outfh = $ready[$j];
-	print $outfh "$line\n";
+	$outfh->print("$line\n");
     } else {
 	print "skipping ".$line;
     }
