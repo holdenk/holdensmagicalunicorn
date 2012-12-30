@@ -9,7 +9,7 @@ my @languages = ("C++","C","OCAML","Ruby","Perl","PHP");
 for my $language (@languages) {
     my $newquery = $query;
     $newquery =~ s/LANG/$language/g;
-    $newquery =~ s/MYLIMIT/15000/g;
+    $newquery =~ s/MYLIMIT/1500/g;
     print "running $newquery\n";
     my $hoboin;
     open($hoboin, "bq --project_id holdensmagicalunicorn --format csv query \"$newquery\"|");
