@@ -3,7 +3,7 @@ use strict;
 use File::Basename;
 use File::Slurp qw (slurp);
 
-my $spatchexec = "cpp_spatch";
+my $spatchexec = "./bin/cpp_spatch";
 my $spatchdir = "cpp_semantic";
 
 sub check_cpp {
@@ -19,7 +19,7 @@ sub fix_cpp {
     while (my $spatch_file = readdir($spatch_files)) {
 	chomp ($spatch_file);
 	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.cocci$/) {
-	    print "running spatch $spatchdir/$spatch_file $file\n";
+	    print "running $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file\n";
 	    print "got:\n";
 	    print `$spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file`;
 	}
