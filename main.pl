@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# The purpose of this is to turn the entire pipeline, possibly on multiple machines
+# The purpose of this is to run the entire pipeline, possibly on multiple machines
 # First step is to get the list of projects to consider which runs on a single host
 # but we don't have to block on it
 use strict;

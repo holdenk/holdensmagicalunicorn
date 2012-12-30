@@ -24,7 +24,11 @@ while ($k < 11) {
     </tbody>
 </table>";
 }
-print "<p>Provide feedback on our work.</p>
+$k++;
+print "
+<p>$k. Enter a name (or non-offensive pseudnym) to be associated with the review (this may be published as part of the commit)</p>
+<p><input type=\"text\" name=\"name\" id=\"name\" size=\"20\" /></p>
+<p>Provide feedback on our work.</p>
 <p><textarea name=\"comment\" cols=\"80\" rows=\"3\"></textarea></p>
 <p><style type=\"text/css\">
 <!--
