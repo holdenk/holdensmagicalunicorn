@@ -56,7 +56,8 @@ sub main() {
 
 sub handle_possible_repo {
     my $repo = shift @_;
-    if ($repo =~ /http/) {
+    chomp ($repo);
+    if ($repo =~ /http/ && $repo =~ /github/) {
 	print $badrepos $repo;
 	print $fixstuff $repo;
     }
