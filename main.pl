@@ -16,11 +16,11 @@ sub main() {
     setup_output();
     my ($bingin,$ghin,$bqin);
 
-    open ($bingin , "perl targets.pl\| tee /tmp/mbingtargets |");
-    open ($ghin, "perl targets2.pl\| tee /tmp/ghtargets |");
-    open ($bqin, "perl bigquerytargets.pl\| tee /tmp/bqtargets|");
+    open ($bingin , "perl targets.pl|");
+    open ($ghin, "perl targets2.pl|");
+    open ($bqin, "perl bigquerytargets.pl|");
     # We only run the fixing on one local machine
-    open ($fixstuff, "|perl fix_pandas.pl\| tee /tmp/fixdata");
+    open ($fixstuff, "|perl fix_pandas.pl");
     my $s = IO::Select->new();
     $s->add($bingin);
     $s->add($ghin);
@@ -90,6 +90,11 @@ sub setup_output {
 	$remoteoutselect->add($child_out);
 	$remoteinselect->add($child_in);
     }
+    # Local mode :)
+    my ($child_out,$child_in);
+    open2($child_in, $child_out, "perl verify.pl");
+    $remoteoutselect->add($child_out);
+    $remoteinselect->add($child_in);
     open ($badrepos , ">badrepos.txt");
 }
 
