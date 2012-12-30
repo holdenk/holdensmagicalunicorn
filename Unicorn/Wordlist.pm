@@ -549,7 +549,7 @@ sub fix_text {
 	    1;
 	}
     }
-    if ($oldtext != $text) {
+    if ($oldtext ne $text) {
 	open (my $output, ">$file");
 	print $output $text;
 	close($output);

@@ -107,7 +107,7 @@ sub handle_url {
         if ($#changes > 0) {
 	    # Yes!
 	    # Push without review or require human review?
-	    if ($mode == "autopush") {
+	    if ($mode eq "autopush") {
 		my $pull_msg = generate_pull_msg($ruser, $repo, @changes);
 		my $twitter_msg = generate_twitter_msg(@changes);
 		#Make pull
