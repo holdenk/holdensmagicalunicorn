@@ -103,7 +103,7 @@ sub handle_line {
     my $line = shift @_;
     chomp ($line);
     print "considering possibility $line\n";
-    @ready = $remoteoutselect->can_write(1);
+    my @ready = $remoteoutselect->can_write(1);
     my $j = int(rand($#ready));
     print $ready[$j] "$line\n";
 }
