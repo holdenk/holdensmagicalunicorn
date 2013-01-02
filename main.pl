@@ -48,9 +48,12 @@ sub main() {
 	    sleep 1;
 	}
     }
-    my @ready;
+    # We no longer hanve any output for them so close the output handles.
+    for my $fh ($remoteoutselect->handles) {
+	$fh->close();
+    }
     # Read the input back from the hosts as it becomes available
-    while (@ready = $remoteinselect->can_read(1200) && $#ready != 0) {
+    while (my @ready = $remoteinselect->can_read(1200) && $#ready != 0) {
 	for my $fh (@ready) {
 	    print "reading line from $fh\n";
 	    my $line;
@@ -111,7 +114,7 @@ sub setup_output {
     }
     # Local mode :)
     my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-    open2($child_in, $child_out, "perl verify.pl");
+    open2($child_in, $child_out, "perl verify.pl") or die "$!";
     $remoteoutselect->add($child_out);
     $remoteinselect->add($child_in);
     open ($badrepos , ">badrepos.txt");
