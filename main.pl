@@ -111,7 +111,7 @@ sub setup_output {
     }
     # Local mode :)
     my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-    open2($child_out, $child_in, "perl verify.pl");
+    open2($child_in, $child_out, "perl verify.pl");
     $remoteoutselect->add($child_out);
     $remoteinselect->add($child_in);
     open ($badrepos , ">badrepos.txt");
