@@ -25,7 +25,7 @@ sub main() {
 #    open ($ghin, "perl targets2.pl|");
 #    open ($bqin, "perl bigquerytargets.pl|");
 #    open ($gharchivein , "perl gharchive.pl|");
-    open ($testin, "testin");
+    open ($testin, "cat testin|");
     # We only run the fixing on one local machine
     open($fixstuff, "|perl fix_pandas.pl");
     my $s = IO::Select->new();
