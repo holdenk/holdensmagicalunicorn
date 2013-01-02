@@ -52,8 +52,7 @@ sub main() {
     # Read the input back from the hosts as it becomes available
     while (@ready = $remoteinselect->can_read(1200) && $#ready != 0) {
 	for my $fh (@ready) {
-	    my $line;
-	    if (defined ($line = $fh->getline)) {
+	    if (my $line = <$fh>) {
 		handle_possible_repo($line);
 	    } else {
 		$remoteoutselect->remove($fh);
