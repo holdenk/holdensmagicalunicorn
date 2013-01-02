@@ -13,9 +13,11 @@ my $remoteoutselect = IO::Select->new();
 my $remoteinselect = IO::Select->new();
 my ($badrepos, $fixstuff);
 
+my %urls;
+
 sub main() {
     setup_output();
-    my ($bingin,$ghin,$bqin,$gharchive) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
+    my ($bingin,$ghin,$bqin,$gharchivein) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
     print "($bingin,$ghin,$bqin)\n";
 
     open ($bingin , "perl targets.pl|");
@@ -120,11 +122,16 @@ sub handle_line {
     my $line = shift @_;
     if ($line =~ /http/) {
 	chomp ($line);
-	print "considering possibility ".$line."\n";
-	my @ready = $remoteoutselect->can_write(1);
-	my $j = int(rand($#ready));
-	my $outfh = $ready[$j];
-	$outfh->print("$line\n");
+	if ($urls{$line}) {
+	    print "skipping $line allready seen\n";
+	} else {
+	    print "considering possibility ".$line."\n";
+	    my @ready = $remoteoutselect->can_write(1);
+	    my $j = int(rand($#ready));
+	    my $outfh = $ready[$j];
+	    $outfh->print("$line\n");
+	    $urls{$line} = 1;
+	}
     } else {
 	print "skipping ".$line;
     }
