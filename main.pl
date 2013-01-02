@@ -18,19 +18,22 @@ my %urls;
 sub main() {
     setup_output();
     my ($bingin,$ghin,$bqin,$gharchivein) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
+    my $testin = IO::Handle->new();
     print "($bingin,$ghin,$bqin)\n";
 
-    open ($bingin , "perl targets.pl|");
-    open ($ghin, "perl targets2.pl|");
-    open ($bqin, "perl bigquerytargets.pl|");
-    open ($gharchivein , "perl gharchive.pl|");
+#    open ($bingin , "perl targets.pl|");
+#    open ($ghin, "perl targets2.pl|");
+#    open ($bqin, "perl bigquerytargets.pl|");
+#    open ($gharchivein , "perl gharchive.pl|");
+    open ($testin, "testin");
     # We only run the fixing on one local machine
     open($fixstuff, "|perl fix_pandas.pl");
     my $s = IO::Select->new();
-    $s->add($bingin);
-    $s->add($ghin);
-    $s->add($bqin);
-    $s->add($gharchivein);
+#    $s->add($bingin);
+#    $s->add($ghin);
+#    $s->add($bqin);
+#    $s->add($gharchivein);
+    $s->add($testin);
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
 	    print "reading from $fh\n"; 
