@@ -11,7 +11,7 @@ $|=1;
 
 my $remoteoutselect = IO::Select->new();
 my $remoteinselect = IO::Select->new();
-my ($badrepos, $fixstuff);
+my ($badrepos, $fixstuffin, $fixstuffout);
 
 my %urls;
 
@@ -25,7 +25,7 @@ sub main() {
     open ($bqin, "perl bigquerytargets.pl|");
     open ($gharchivein , "perl gharchive.pl|");
     # We only run the fixing on one local machine
-    open ($fixstuff, "|perl fix_pandas.pl");
+    open2($fixstuffout, $fixstuffin, "perl fix_pandas.pl");
     my $s = IO::Select->new();
     $s->add($bingin);
     $s->add($ghin);
@@ -53,12 +53,13 @@ sub main() {
 	    if (defined ($line = $fh->getline)) {
 		handle_possible_repo($line);
 	    } else {
-		$remoteinselect->remove($fh);
+		$remoteoutselect->remove($fh);
 	    }
 	}
     }
+    print "Telling children we are done\n";
     # Tell all of the children we are done
-    my @outputhandles = $remoteoutselect->can_write;
+    my @outputhandles = $remoteinselect->can_write;
     for my $fh (@outputhandles) {
 	$fh->print("quitquitquit\n");
 	sleep 5;
@@ -67,7 +68,12 @@ sub main() {
     # Read any remaining input back from the hosts
     while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
 	for my $fh (@ready) {
-	    handle_possible_repo(<$fh>);
+	    my $line;
+	    if (defined ($line = $fh->getline)) {
+		handle_possible_repo($line);
+	    } else {
+		$remoteinselect->remove($fh);
+	    }
 	}
     }
     close ($badrepos);
@@ -75,10 +81,11 @@ sub main() {
 
 sub handle_possible_repo {
     my $repo = shift @_;
+    print "Handling possible bad repo $repo\n";
     chomp ($repo);
     if ($repo =~ /http/ && $repo =~ /github/) {
 	print $badrepos $repo;
-	print $fixstuff $repo;
+	print $fixstuffin $repo;
     }
 }
 
@@ -102,7 +109,7 @@ sub setup_output {
 	print "Updating host $hostname\n";
 	`scp magic.tar.bz2 $hostname:~/`;
 	my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-	open2($child_in, $child_out, "ssh -t -t $hostname");
+	open2($child_out, $child_in, "ssh -t -t $hostname");
 	#hack
 	sleep 1;
 	print $child_out "mkdir $pwd;cd $pwd;cp ~/mymagic.tar ./;tar -xvf mymagic.tar;export PATH=$pwd/bin:\$PATH;perl verify.pl";
@@ -111,7 +118,7 @@ sub setup_output {
     }
     # Local mode :)
     my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-    open2($child_in, $child_out, "perl verify.pl");
+    open2($child_out, $child_in, "perl verify.pl");
     $remoteoutselect->add($child_out);
     $remoteinselect->add($child_in);
     open ($badrepos , ">badrepos.txt");
