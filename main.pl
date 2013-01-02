@@ -53,7 +53,8 @@ sub main() {
 	$fh->close();
     }
     # Read the input back from the hosts as it becomes available
-    while (my @ready = $remoteinselect->can_read(1200) && $#ready != 0) {
+    my @ready;
+    while (@ready = $remoteinselect->can_read(1200) && $#ready != 0) {
 	for my $fh (@ready) {
 	    print "reading line from $fh\n";
 	    my $line;
