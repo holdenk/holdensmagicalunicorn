@@ -11,7 +11,7 @@ $|=1;
 
 my $remoteoutselect = IO::Select->new();
 my $remoteinselect = IO::Select->new();
-my ($badrepos, $fixstuffin, $fixstuffout);
+my ($badrepos, $fixstuff);
 
 my %urls;
 
@@ -25,7 +25,7 @@ sub main() {
     open ($bqin, "perl bigquerytargets.pl|");
     open ($gharchivein , "perl gharchive.pl|");
     # We only run the fixing on one local machine
-    open2($fixstuffout, $fixstuffin, "perl fix_pandas.pl");
+    open($fixstuff, "|perl fix_pandas.pl");
     my $s = IO::Select->new();
     $s->add($bingin);
     $s->add($ghin);
@@ -84,8 +84,8 @@ sub handle_possible_repo {
     print "Handling possible bad repo $repo\n";
     chomp ($repo);
     if ($repo =~ /http/ && $repo =~ /github/) {
-	print $badrepos $repo;
-	print $fixstuffin $repo;
+	print $badrepos $repo."\n";
+	print $fixstuff $repo."\n";
     }
 }
 
@@ -109,7 +109,7 @@ sub setup_output {
 	print "Updating host $hostname\n";
 	`scp magic.tar.bz2 $hostname:~/`;
 	my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-	open2($child_out, $child_in, "ssh -t -t $hostname");
+	open2($child_in, $child_out, "ssh -t -t $hostname");
 	#hack
 	sleep 1;
 	print $child_out "mkdir $pwd;cd $pwd;cp ~/mymagic.tar ./;tar -xvf mymagic.tar;export PATH=$pwd/bin:\$PATH;perl verify.pl";
@@ -118,7 +118,7 @@ sub setup_output {
     }
     # Local mode :)
     my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-    open2($child_out, $child_in, "perl verify.pl");
+    open2($child_in, $child_out, "perl verify.pl");
     $remoteoutselect->add($child_out);
     $remoteinselect->add($child_in);
     open ($badrepos , ">badrepos.txt");
