@@ -15,18 +15,20 @@ my ($badrepos, $fixstuff);
 
 sub main() {
     setup_output();
-    my ($bingin,$ghin,$bqin) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
+    my ($bingin,$ghin,$bqin,$gharchive) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
     print "($bingin,$ghin,$bqin)\n";
 
     open ($bingin , "perl targets.pl|");
     open ($ghin, "perl targets2.pl|");
     open ($bqin, "perl bigquerytargets.pl|");
+    open ($gharchivein , "perl gharchive.pl|");
     # We only run the fixing on one local machine
     open ($fixstuff, "|perl fix_pandas.pl");
     my $s = IO::Select->new();
     $s->add($bingin);
     $s->add($ghin);
     $s->add($bqin);
+    $s->add($gharchivein);
     while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
 	    print "reading from $fh\n"; 
@@ -43,9 +45,14 @@ sub main() {
     }
     my @ready;
     # Read the input back from the hosts as it becomes available
-    while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
+    while (@ready = $remoteinselect->can_read(1200) && @ready != ()) {
 	for my $fh (@ready) {
-	    handle_possible_repo($fh->getline);
+	    my $line;
+	    if (defined ($line = $fh->getline)) {
+		handle_possible_repo($line);
+	    } else {
+		$remoteinselect->remove($fh);
+	    }
 	}
     }
     # Tell all of the children we are done
