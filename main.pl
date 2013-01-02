@@ -50,7 +50,7 @@ sub main() {
     }
     my @ready;
     # Read the input back from the hosts as it becomes available
-    while (@ready = $remoteinselect->can_read(1200) && @ready != ()) {
+    while (@ready = $remoteinselect->can_read(1200) && $#ready != 0) {
 	for my $fh (@ready) {
 	    my $line;
 	    if (defined ($line = $fh->getline)) {
@@ -67,17 +67,6 @@ sub main() {
 	$fh->print("quitquitquit\n");
 	sleep 5;
 	$fh->print("exit\n");
-    }
-    # Read any remaining input back from the hosts
-    while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
-	for my $fh (@ready) {
-	    my $line;
-	    if (defined ($line = $fh->getline)) {
-		handle_possible_repo($line);
-	    } else {
-		$remoteinselect->remove($fh);
-	    }
-	}
     }
     close ($badrepos);
 }
