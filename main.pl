@@ -12,6 +12,7 @@ $|=1;
 my $remoteoutselect = IO::Select->new();
 my $remoteinselect = IO::Select->new();
 my ($badrepos, $fixstuff);
+my ($verify_out, $verify_in) = (IO::Handle->new(), IO::Handle->new());
 
 my %urls;
 
@@ -65,14 +66,7 @@ sub main() {
 	    }
 	}
     }
-    print "Telling children we are done\n";
-    # Tell all of the children we are done
-    my @outputhandles = $remoteinselect->can_write;
-    for my $fh (@outputhandles) {
-	$fh->print("quitquitquit\n");
-	sleep 5;
-	$fh->print("exit\n");
-    }
+    print $verify_out "quitquitquit\n";
     close ($badrepos);
 }
 
@@ -87,37 +81,8 @@ sub handle_possible_repo {
 }
 
 sub setup_output {
-    my $hosts;
-    open ($hosts, "hosts.txt");
-    print "Clean up old distro tarball\n";
-    `rm magic.tar.bz2; rm magic.tar`;
-    print "Making new distro tarball\n";
-    `tar --exclude-vcs  -cf ./magic.tar ./; tar -rf ./magic.tar ../settings.yml`;
-    print "Compressing\n";
-    `bzip2 magic.tar`;
-    while (my $hostline = <$hosts>) {
-	#Fuck comments
-	if ($hostline =~ /^\#/) {
-	    next;
-	}
-	my @murh = split(/\:/,$hostline);
-	my $hostname = $murh[0];
-	my $pwd = $murh[1];
-	print "Updating host $hostname\n";
-	`scp magic.tar.bz2 $hostname:~/`;
-	my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-	open2($child_in, $child_out, "ssh -t -t $hostname");
-	#hack
-	sleep 1;
-	print $child_out "mkdir $pwd;cd $pwd;cp ~/mymagic.tar ./;tar -xvf mymagic.tar;export PATH=$pwd/bin:\$PATH;perl verify.pl";
-	$remoteoutselect->add($child_out);
-	$remoteinselect->add($child_in);
-    }
     # Local mode :)
-    my ($child_out,$child_in) = (IO::Handle->new(), IO::Handle->new());
-    open2($child_in, $child_out, "perl verify.pl") or die "$!";
-    $remoteoutselect->add($child_out);
-    $remoteinselect->add($child_in);
+    open2($verify_in, $verify_out, "perl verify.pl") or die "$!";
     open ($badrepos , ">badrepos.txt");
 }
 
@@ -130,10 +95,7 @@ sub handle_line {
 	    print "skipping $line allready seen\n";
 	} else {
 	    print "considering possibility ".$line."\n";
-	    my @ready = $remoteoutselect->can_write(1);
-	    my $j = int(rand($#ready));
-	    my $outfh = $ready[$j];
-	    $outfh->print("$line\n");
+	    $verify_out->print("$line\n");
 	    $urls{$line} = 1;
 	}
     } else {
