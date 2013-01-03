@@ -9,8 +9,6 @@ use IO::Handle;
 use IPC::Open2;
 $|=1;
 
-my $remoteoutselect = IO::Select->new();
-my $remoteinselect = IO::Select->new();
 my ($badrepos, $fixstuff);
 my ($verify_out, $verify_in) = (IO::Handle->new(), IO::Handle->new());
 
@@ -49,24 +47,12 @@ sub main() {
 	    sleep 1;
 	}
     }
-    # We no longer hanve any output for them so close the output handles.
-    for my $fh ($remoteoutselect->handles) {
-	$fh->close();
-    }
-    # Read the input back from the hosts as it becomes available
-    my @ready;
-    while (@ready = $remoteinselect->can_read(1200) && $#ready != 0) {
-	for my $fh (@ready) {
-	    print "reading line from $fh\n";
-	    my $line;
-	    if (defined ($line = $fh->getline)) {
-		handle_possible_repo($line);
-	    } else {
-		$remoteoutselect->remove($fh);
-	    }
-	}
-    }
+    # Tell verify we are done
     print $verify_out "quitquitquit\n";
+    # Read the input back from the hosts as it becomes available
+    while (my $line = <$verify_in>) {
+	handle_possible_repo($line);
+    }
     close ($badrepos);
 }
 
