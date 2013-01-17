@@ -20,6 +20,8 @@ WriteMakefile
 	 'Slurp' => 0,
 	 'Net::SSH' => 0,
 	 'Data::Dumper' => 0,
+	 'JSON' => 0,
+	 'PerlIO::gzip' => 0,
       },
    'linkext'      => { LINKTYPE => '' }, # no link needed
    'dist'         =>

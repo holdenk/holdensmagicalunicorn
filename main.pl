@@ -1,100 +1,92 @@
 #!/usr/bin/perl
-# The purpose of this is to turn the entire pipeline, possibly on multiple machines
+# The purpose of this is to run the entire pipeline
 # First step is to get the list of projects to consider which runs on a single host
 # but we don't have to block on it
 use strict;
 use warnings;
 use IO::Select;
+use IO::Handle;
 use IPC::Open2;
 $|=1;
 
-my $remoteoutselect = IO::Select->new();
-my $remoteinselect = IO::Select->new();
 my ($badrepos, $fixstuff);
+my ($verify_out, $verify_in) = (IO::Handle->new(), IO::Handle->new());
+
+my %urls;
 
 sub main() {
     setup_output();
-    my ($bingin,$ghin,$bqin);
+    my ($bingin,$ghin,$bqin,$gharchivein) = (IO::Handle->new(), IO::Handle->new(), IO::Handle->new(), IO::Handle->new());
+    my $testin = IO::Handle->new();
+    print "($bingin,$ghin,$bqin)\n";
 
-    open ($bingin , "perl targets.pl\| tee /tmp/mbingtargets |");
-    open ($ghin, "perl targets2.pl\| tee /tmp/ghtargets |");
-    open ($bqin, "perl bigquerytargets.pl\| tee /tmp/bqtargets|");
+#    open ($bingin , "perl targets.pl|");
+#    open ($ghin, "perl targets2.pl|");
+#    open ($bqin, "perl bigquerytargets.pl|");
+#    open ($gharchivein , "perl gharchive.pl|");
+    open ($testin, "cat testin|");
     # We only run the fixing on one local machine
-    open ($fixstuff, "|perl fix_pandas.pl\| tee /tmp/fixdata");
+    open($fixstuff, "|perl fix_pandas.pl");
     my $s = IO::Select->new();
-    $s->add($bingin);
-    $s->add($ghin);
-    $s->add($bqin);
-    while (my @ready = $s->can_read) {
+#    $s->add($bingin);
+#    $s->add($ghin);
+#    $s->add($bqin);
+#    $s->add($gharchivein);
+    $s->add($testin);
+    while (my @ready = $s->can_read()) {
 	foreach my $fh (@ready) {
-	    my $line = <$fh>;
-	    handle_line($line);
+	    print "reading from $fh\n"; 
+	    my $line;
+	    if (defined ($line = $fh->getline)) {
+		print "line is $line";
+		handle_line($line);
+	    } else {
+		print "removing file handle $fh\n";
+		$s->remove($fh);
+	    }
+	    sleep 1;
 	}
     }
-    my @ready;
+    # Tell verify we are done
+    print $verify_out "quitquitquit\n";
     # Read the input back from the hosts as it becomes available
-    while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
-	for my $fh (@ready) {
-	    handle_possible_repo(<$fh>);
-	}
-    }
-    # Tell all of the children we are done
-    my @outputhandles = $remoteoutselect->can_write;
-    for my $fh (@outputhandles) {
-	print $fh "quitquitquit\n";
-	sleep 5;
-	print $fh "exit\n";
-    }
-    # Read any remaining input back from the hosts
-    while (@ready = $remoteinselect->can_read(60) && @ready != ()) {
-	for my $fh (@ready) {
-	    handle_possible_repo(<$fh>);
-	}
+    while (my $line = <$verify_in>) {
+	handle_possible_repo($line);
     }
     close ($badrepos);
 }
 
 sub handle_possible_repo {
     my $repo = shift @_;
-    if ($repo =~ /http/) {
-	print $badrepos $repo;
-	print $fixstuff $repo;
+    print "Handling possible bad repo $repo\n";
+    chomp ($repo);
+    if ($repo =~ /http/ && $repo =~ /github/) {
+	print $badrepos $repo."\n";
+	print $fixstuff $repo."\n";
     }
 }
 
 sub setup_output {
-    my $hosts;
-    open ($hosts, "hosts.txt");
-    print "Clean up old distro tarball\n";
-    `rm magic.tar.bz2; rm magic.tar`;
-    print "Making new distro tarball\n";
-    `tar --exclude-vcs  -cf ./magic.tar ./; tar -rf ./magic.tar ../settings.yml`;
-    print "Compressing\n";
-    `bzip2 magic.tar`;
-    while (my $hostline = <$hosts>) {
-	#Fuck comments
-	if ($hostline =~ /^\#/) {
-	    next;
-	}
-	my @murh = split(/\:/,$hostline);
-	my $hostname = $murh[0];
-	my $pwd = $murh[1];
-	print "Updating host $hostname\n";
-	`scp magic.tar.bz2 $hostname:~/`;
-	my ($child_out,$child_in);
-	open2($child_in, $child_out, "ssh -t -t $hostname");
-	#hack
-	sleep 1;
-	print $child_out "mkdir $pwd;cd $pwd;cp ~/mymagic.tar ./;tar -xvf mymagic.tar;export PATH=$pwd/bin:\$PATH;perl verify.pl";
-	$remoteoutselect->add($child_out);
-	$remoteinselect->add($child_in);
-    }
+    # Local mode :)
+    open2($verify_in, $verify_out, "perl verify.pl") or die "$!";
     open ($badrepos , ">badrepos.txt");
 }
 
+# Handle it somewhere
 sub handle_line {
     my $line = shift @_;
-    
+    if ($line =~ /http/) {
+	chomp ($line);
+	if ($urls{$line}) {
+	    print "skipping $line allready seen\n";
+	} else {
+	    print "considering possibility ".$line."\n";
+	    $verify_out->print("$line\n");
+	    $urls{$line} = 1;
+	}
+    } else {
+	print "skipping ".$line;
+    }
 }
 
 main();

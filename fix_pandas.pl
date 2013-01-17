@@ -21,6 +21,7 @@ my $consumer_key = $settings->{"twitter.consumer_key"};
 my $consumer_secret = $settings->{"twitter.consumer_secret"};
 my $user = $settings->{"github.user"};
 my $token = $settings->{"github.token"};
+my $mode = $settings->{"mode"};
 print "using ck $consumer_key / secret $consumer_secret\n";
 my $nt = Net::Twitter->new(
     traits   => [qw/OAuth API::REST/],
@@ -35,7 +36,10 @@ print "Hello!\n";
 print "Connecting to github!\n";
 my $u = Pithub::Users->new( token => $token );
 my $result = $u->get;
+my $url_out;
+open ($url_out, ">>review_urls");
 print "Reading input\n";
+
 while (my $l = <>) {
     if ($l =~ /github\.com\/(.*?)\s*$/) {
         print "Checking $1\n";
@@ -46,6 +50,7 @@ while (my $l = <>) {
         print "fuck $l\n";
     }
 }
+close ($url_out);
 
 sub handle_url {
     my $url = shift @_;
@@ -100,22 +105,31 @@ sub handle_url {
 	`cd foo && cd * && git push`;
         #Did we change anything?
         if ($#changes > 0) {
-            #Yes!
-            my $pull_msg = generate_pull_msg($ruser, $repo, @changes);
-            my $twitter_msg = generate_twitter_msg(@changes);
-            #Make pull
-            my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
-            my $result = $pu->create(user => $ruser,
-                                     repo => $repo,
-                                     data => {
-                                         title => "Pull request to a fix things",
-					 body => $pull_msg,
-                                         base => $master_branch,
-                                         head => "$user:".$master_branch});
-	    my $link = $result->content->{_links}->{html}->{href};
-            #Post to twitter
-            $twitter_msg =~ s/\[LINK\]$/$link/;
-	    $nt->update($twitter_msg);
+	    # Yes!
+	    # Push without review or require human review?
+	    my $pull_msg = generate_pull_msg($ruser, $repo, @changes);
+	    my $twitter_msg = generate_twitter_msg(@changes);
+	    if ($mode eq "autopush") {
+		#Make pull
+		my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
+		my $result = $pu->create(user => $ruser,
+					 repo => $repo,
+					 data => {
+					     title => "Pull request to a fix things",
+					     body => $pull_msg,
+					     base => $master_branch,
+					     head => "$user:".$master_branch});
+		my $link = $result->content->{_links}->{html}->{href};
+		#Post to twitter
+		$twitter_msg =~ s/\[LINK\]$/$link/;
+		$nt->update($twitter_msg);
+	    } else {
+		# Fetch the upstream so we can generate a diff against it for the reviewer
+		`cd foo; cd *;git push;git fetch upstream master;git branch upstream_master upstream/master;git push origin upstream_master`;
+		my $review_url = "https://github.com/$user/$repo/compare/upstream_master…master";
+		print "review url $review_url\n";
+		print $url_out "$review_url,$pull_msg,$twitter_msg,$ruser\n";
+	    }
         }
     }
 }
