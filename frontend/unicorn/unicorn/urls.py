@@ -15,5 +15,5 @@ urlpatterns = patterns('',
      url(r'^admin/', include(admin.site.urls)),
      url(r'^$', 'verify.views.index'),
      url(r'^review', 'verify.views.review'),
-
+     url(r'accounts/', include('social_auth.urls')),
 )
