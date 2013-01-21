@@ -12,4 +12,5 @@ class PatchInfo(models.Model):
                                    default=False)
     exported = models.BooleanField(max_length=1000, help_text="Has this patch been examined",
                                    default=False)
+    touched_time = models.DateTimeField()
 

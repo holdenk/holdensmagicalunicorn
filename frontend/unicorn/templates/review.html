@@ -1,1 +1,9 @@
 Welcome {{ghusername}}!
+{% if newpatch %}
+What do you think of the following review:
+<iframe src="{% url reviewlink %}"></iframe>
+<from action="/review" method="POST">
+{% else %}
+We have run out of patches to have reviewed! Thanks so much!
+{% endif %}
+</form>
