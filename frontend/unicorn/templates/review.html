@@ -1,9 +1,22 @@
+<html>
+<head>
+<title>
 Welcome {{ghusername}}!
+</title>
+</head>
+<body>
+<form name="input" action="review" method="post">
 {% if newpatch %}
-What do you think of the following review:
-<iframe src="{% url reviewlink %}"></iframe>
-<from action="/review" method="POST">
+Welcome {{ghusername}}! What do you think of the following review:<br/>
+<input type="hidden" value="{{id}}" name="id">
+<a href="{{reviewlink}}" target="_blank">{{reviewlink}}</a><br/>
+<!-- Since we don't run SSL we can't ninja the https review links :( -->
+<!-- <iframe src="{{reviewlink}}" width="100%" height="75%"></iframe><br/> -->
+<input type="submit" value="Yes" name="approve"><input type="submit" value="No" name="approve"><br/>
 {% else %}
 We have run out of patches to have reviewed! Thanks so much!
 {% endif %}
 </form>
+</form>
+</body>
+</html>

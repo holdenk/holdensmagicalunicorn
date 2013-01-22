@@ -17,16 +17,27 @@ def review(request):
     t = loader.get_template("review.html")
     social = UserSocialAuth.objects.filter(user = request.user)
     githubusername = social[0].user
+    # Handle post requests first
+    if 'approve' in request.POST:
+        id = request.POST['id']
+        patch = PatchInfo.objects.get(Q(reviewer_username = githubusername), Q(id = id))[0]
+        patch.username = githubusername
+        patch.touched_time = datetime.now()        
     # Fetch a patch that has not been examined and is either has no reviewer
     # the current user as the reviewer OR is more than 2 days since last
     # given to a reviewer
     newpatch = False
     patch = None
+    reviewlink = None
+    id = None
     try:
+        newpatch = True
         patch = PatchInfo.objects.get(Q(examined=False), Q(reviewer_username = '') | Q(reviewer_username = githubusername) | Q(touched_time__lte=date.today() - timedelta(2)))[0]
         patch.username = githubusername
         patch.touched_time = datetime.now()
+        reviewlink = patch.diff_url
+        id = patch.id
     except Exception, err:
-        newpatches = True
-    c = Context({'ghusername' : githubusername, 'patch': patch, 'newpatch': newpatch})
+        newpatch = False
+    c = Context({'ghusername' : githubusername, 'patch': patch, 'newpatch': newpatch, 'reviewlink': reviewlink, 'id': id})
     return HttpResponse(t.render(c))
