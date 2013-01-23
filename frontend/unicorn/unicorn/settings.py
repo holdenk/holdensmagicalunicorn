@@ -130,6 +130,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'social_auth',
     'verify',
+    'csvimport',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -186,7 +187,6 @@ SOCIAL_AUTH_PIPELINE = (
 )
 LOGIN_REDIRECT_URL="/review"
 LOGIN_URL="/accounts/login/github"
-
 try:
     from local_settings import *
 except:
