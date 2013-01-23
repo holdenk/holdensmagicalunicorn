@@ -5,6 +5,7 @@ class PatchInfo(models.Model):
     diff_url=models.CharField(max_length=1000, help_text="The URL of the github diff")
     target_username=models.CharField(max_length=1000, help_text="The target github user to apply the pull request to (if approved)")
     message_txt=models.CharField(max_length=1000, help_text="The commit message text")
+    twitter_txt=models.CharField(max_length=200, help_text="The text for the twitter msg")
     reviewer_username=models.CharField(max_length=1000, help_text="The username of the reviewer", null=True, blank=True)
     good = models.BooleanField(max_length=1000, help_text="Is this patch good",
                                default=False)
