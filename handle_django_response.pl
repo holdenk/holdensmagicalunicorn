@@ -42,5 +42,22 @@ my $url_out;
 
 while (<>) {
     my ($url,$target_username,$message_txt,$twitter_txt,$patch_good) = split(/,/, $_);
-    
+    my $repo = "";
+    if ($url =~ /https:\/\/github.com\/[^\/]+?\/([^\/]+?)\//) {
+	$repo = $1;
+    }
+    if ($patch_good) {
+	my $pu = Pithub::PullRequests->new(user => $user ,token => $token);
+	my $result = $pu->create(user => $target_username,
+				 repo => $repo,
+				 data => {
+				     title => "Pull request to a fix things",
+				     body => $message_txt,
+				     base => "master",
+				     head => "$user:"."master"});
+	my $link = $result->content->{_links}->{html}->{href};
+	#Post to twitter
+	$twitter_msg =~ s/\[LINK\]$/$link/;
+	$nt->update($twitter_msg);
+    }    
 }
