@@ -57,7 +57,7 @@ while (<>) {
 				     head => "$user:"."master"});
 	my $link = $result->content->{_links}->{html}->{href};
 	#Post to twitter
-	$twitter_msg =~ s/\[LINK\]$/$link/;
-	$nt->update($twitter_msg);
+	$twitter_txt =~ s/\[LINK\]$/$link/;
+	$nt->update($twitter_txt);
     }    
 }

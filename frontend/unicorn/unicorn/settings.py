@@ -23,17 +23,7 @@ if (DEBUG):
         # Don't forget to use absolute paths, not relative paths.
     )
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE':'django.db.backends.mysql',
-            'NAME':'hobogitquest',
-            'USER':'',
-            'PASSWORD':'',
-            'HOST':'localhost',
-            'PORT':'3306'
-            }
-        }
-
+    import db_settings.py
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
