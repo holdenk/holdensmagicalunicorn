@@ -7,12 +7,13 @@ Welcome {{ghusername}}! - In Soviet Russia, Code Fixes You!
 <body>
 <a href="https://github.com/holdenk"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"></a>
 <center><img src="/staticz/unicorn.png"></center><br>
+<div align="left"
 <form name="input" action="review" method="post">
 {% if newpatch %}
 Welcome {{ghusername}}! What do you think of the following review:<br/>
 <input type="hidden" value="{{id}}" name="id">
 <a href="{{reviewlink}}" target="_blank">{{reviewlink}}</a><br/>
-<!-- Since we don't run SSL we can't ninja the https review links :( -->
+<!-- Since github sets  X-Frame-Options: deny we can't use it :( -->
 <!-- <iframe src="{{reviewlink}}" width="100%" height="75%"></iframe><br/> -->
 <input type="submit" value="Yes" name="approve"><input type="submit" value="No" name="approve"><br/>
 {% else %}
@@ -20,5 +21,9 @@ We have run out of patches to have reviewed! Thanks so much! (and or the server 
 {% endif %}
 </form>
 </form>
+</div>
+<div align="right">
+<iframe src="http://rcm.amazon.com/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=demonmoo-20&o=1&p=8&l=as4&m=amazon&f=ifr&ref=ss_til&asins=B004CRYE2C" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+</div>
 </body>
 </html>

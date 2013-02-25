@@ -32,15 +32,15 @@ def review(request):
     patch = None
     reviewlink = None
     id = None
-    try:
-        newpatch = True
-        patch = PatchInfo.objects.get(Q(examined=False), Q(reviewer_username = '') | Q(reviewer_username = githubusername) | Q(touched_time__lte=date.today() - timedelta(2)))[0]
-        patch.username = githubusername
-        patch.touched_time = datetime.now()
-        reviewlink = patch.diff_url
-        id = patch.id
-    except Exception, err:
-        newpatch = False
+    #try:
+    newpatch = True
+    patch = PatchInfo.objects.filter(Q(examined=False), Q(reviewer_username = '') | Q(reviewer_username = githubusername) | Q(touched_time__lte=date.today() - timedelta(2)))[0]
+    patch.username = githubusername
+    patch.touched_time = datetime.now()
+    reviewlink = patch.diff_url
+    id = patch.id
+    #except Exception, err:
+    #    newpatch = False
     c = Context({'ghusername' : githubusername, 'patch': patch, 'newpatch': newpatch, 'reviewlink': reviewlink, 'id': id})
     return HttpResponse(t.render(c))
 
