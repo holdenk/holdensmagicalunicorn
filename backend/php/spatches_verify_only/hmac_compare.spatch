@@ -1,3 +1,6 @@
+# You appear to be using string equality to compare a hashed hmac value
+# This is [possibly] insecure if it is being used as part of a password
+# validation. 
 -hash_hmac(X,Y,Z) == A
 +magicSecureStringCompare(hash_hmac(X,Y,Z),A)
 
