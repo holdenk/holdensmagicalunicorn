@@ -1,0 +1,36 @@
+You appear to be using string equality to compare a hashed hmac value
+This is [possibly] insecure if it is being used as part of a password validation.
+As a work around you can do something like :
+<?
+if (hash_hmac(X,Y,Z) == A) {
+//...
+}
+?>
+<?
+/**
+ * Compare two strings while attempting to limmit leaking information
+ * about either string to reduce the chance of side-channel timming
+ * attacks.
+ * See http://en.wikipedia.org/wiki/Timing_attack
+ * 
+ * @param string $a
+ * @param string $b
+ * @return bool
+ */
+function magicSecureStringCompare($a, $b) {
+ $different = 0;
+ for ($i = 0; $i < strlen($a) or $i < strlen($b); $i++) {
+   if ($i < strlen($a) and $i < strlen($b)) {
+      $c1 = ord($a[$i]);
+      $c2 = ord($b[$i]);
+   } else {
+      $different |= 1;
+   }
+   $different |= $c1 ^ $c2;
+ }
+ return $different == 0;
+}
+if (magicSecureStringCompare(hash_hmac(X,Y,Z),A)) {
+//...
+}
+?>
