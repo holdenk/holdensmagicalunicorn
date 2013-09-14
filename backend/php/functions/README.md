@@ -1,0 +1,1 @@
+List of php functions that can be useful to either auto-patch or illustrate fixes in code.
