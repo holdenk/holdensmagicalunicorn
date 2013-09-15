@@ -15,12 +15,12 @@ sub fix_shell {
         #Probably!
         #Handle with [-e foo -e bar]
 	# http://www.pixelbeat.org/programming/shell_script_mistakes.html
-        $rt =~ s/^\s*if\s*\[\s*\-e\s*(\w+?)\s*\-e\s*(\w+?)\s*\]\s*/if [-e $1] || [-e $2]/;
+        $rt =~ s/^\s*if\s*\[\s*\-e\s*(\w+?)\s*\-e\s*(\w+?)\s*\]\s*$/if [-e $1] || [-e $2]/gm;
         #Double negative
-        $rt =~ s/^\s*if\s+\[\s*\!\-z\s*(\"\$\w+\")\]\s*/if [$1]/;
+        $rt =~ s/^\s*if\s+\[\s*\!\-z\s*(\"\$\w+\")\]\s*$/if [$1]/gm;
         #Check for cat pipe to grep
 	#i.e cat foo | grep baz
-        $rt =~ s/^\s*cat\s*(\w+)\s*\|\s*grep\s+([\w\"\\]+)\s*/grep $2 < $1/
+        $rt =~ s/^\s*cat\s*(\w+)\s*\|\s*grep\s+([\w\"\\]+)\s*$/grep $2 < $1/gm;
     } else {
         return 0;
     }
