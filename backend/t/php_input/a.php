@@ -1,5 +1,6 @@
 <?
 $a = split("www", "coffeewwwpandas",1);
+$q = split("www", "coffeewwwpandas");
 $b= split("/www/", "coffeewwwpandas");
 $c = preg_split("/www/i", "coffeewwwpandas");
 $d = spliti("www", "coffeewwwpandas",1);

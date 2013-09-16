@@ -4,8 +4,9 @@ use File::Basename;
 use File::Slurp qw (slurp);
 
 my $spatchexec = "./bin/php_spatch";
-my $phpFunctionDir = "./php_functions/";
-my $spatchdir = "php_spatches";
+my $phpFunctionDir = "./php/functions/";
+my $spatchDir = "./php/spatches";
+my $spatchVerifyDir = "./php/spatches_verify_only";
 
 sub check_php {
     my $file = shift @_;
@@ -16,14 +17,15 @@ sub check_php {
     }
     return 0;
 }
+
 sub fix_php {
     my $file = shift @_;
     #Run the spatches
-    opendir (my $spatch_files, "$spatchdir") || "can't opendir $!\n";
+    opendir (my $spatch_files, "$spatchDir") || "can't opendir $!\n";
     while (my $spatch_file = readdir($spatch_files)) {
 	chomp ($spatch_file);
-	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.spatch$/) {
-	    `$spatchexec --apply-patch -f $spatchdir/$spatch_file $file`;
+	if (-f $spatchDir."/".$spatch_file && $spatch_file =~ /\.spatch$/) {
+	    `$spatchexec --apply-patch -f $spatchDir/$spatch_file $file`;
 	}
     }
     closedir($spatch_files);

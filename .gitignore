@@ -23,6 +23,7 @@ auto-save-list
 tramp
 .\#*
 *.pyc
+3rdparty
 # Org-mode
 .org-id-locations
 *_archive
