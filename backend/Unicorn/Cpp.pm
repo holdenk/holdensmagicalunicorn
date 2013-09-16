@@ -4,7 +4,7 @@ use File::Basename;
 use File::Slurp qw (slurp);
 
 my $spatchexec = "./bin/cpp_spatch";
-my $spatchdir = "cpp_semantic";
+my $spatchdir = "./cpp/spatches";
 
 sub check_cpp {
     my $file = shift @_;
