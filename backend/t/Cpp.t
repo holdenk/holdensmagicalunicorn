@@ -2,7 +2,7 @@
 #Note: we don't check to make sure things still compile/run since we
 #are updating deprecated thigns that probably don't compile on mondern GCC anyways
 #and I'm lazy.
-use Test::More tests => 4;
+use Test::More tests => 2;
 use File::Temp;
 use Unicorn::Cpp qw(fix_cpp check_cpp);
 use File::Slurp qw (slurp);

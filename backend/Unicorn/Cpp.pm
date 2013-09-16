@@ -20,9 +20,9 @@ sub fix_cpp {
     while (my $spatch_file = readdir($spatch_files)) {
 	chomp ($spatch_file);
 	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.cocci$/) {
-	    print "running $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file\n";
-	    print "got:\n";
-	    print `COCCINELLE_HOME=\`cat ./conf/cpp_spatch_home\` $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file`;
+	    #print "running $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file\n";
+	    #print "got:\n";
+	    `COCCINELLE_HOME=\`cat ./conf/cpp_spatch_home\` $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file`;
 	}
     }
     closedir($spatch_files);
