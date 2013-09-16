@@ -6,7 +6,7 @@ Requirements:
 - Perl depdencies are brought in through the make file
 * Recent[ish] version of Python (was built against 2.7.3)
 * pfff [auto installed under 3rd party]
-* 
+* Coccinelle [auto installed under 3rd party]
 A very simple github bot. Uses an accout of the same name. It provides spelling corrections for README files and other simple suggestions.
 Requires pfff & php for the php code fixing to work.
 The current method it works is find_targets[*].pl finds possible files on github that might have something we could do to them.

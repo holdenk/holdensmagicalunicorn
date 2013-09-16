@@ -5,6 +5,7 @@ use File::Slurp qw (slurp);
 
 my $spatchexec = "./bin/cpp_spatch";
 my $spatchdir = "./cpp/spatches";
+my $spatch_home_pointer = "./conf/cpp_spatch_home";
 
 sub check_cpp {
     my $file = shift @_;
@@ -21,7 +22,7 @@ sub fix_cpp {
 	if (-f $spatchdir."/".$spatch_file && $spatch_file =~ /\.cocci$/) {
 	    print "running $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file\n";
 	    print "got:\n";
-	    print `$spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file`;
+	    print `COCCINELLE_HOME=\`cat ./conf/cpp_spatch_home\` $spatchexec -c++ --in-place --sp-file $spatchdir/$spatch_file $file`;
 	}
     }
     closedir($spatch_files);

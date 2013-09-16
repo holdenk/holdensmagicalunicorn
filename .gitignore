@@ -24,6 +24,8 @@ tramp
 .\#*
 *.pyc
 3rdparty
+backend/conf/
+backend/bin/
 # Org-mode
 .org-id-locations
 *_archive
