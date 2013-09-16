@@ -1,3 +1,4 @@
+A github bot that fixes others peoples code and spelling mistakes. In the future also will provide code quality reports for things it can't autofix.
 
 Backend Requirements: 
 * Ocaml >= 4
@@ -11,12 +12,8 @@ Fronted:
 * django >= 1.4
 * django-csvimport
 
-A very simple github bot. Uses an accout of the same name. It provides spelling corrections for README files and other simple suggestions.
-Requires pfff & php for the php code fixing to work.
-The current method it works is find_targets[*].pl finds possible files on github that might have something we could do to them.
-Then find_errors.pl will do a basic check
-Then fix_pandas.pl does the "hard" work
-Update settings.yml to have your credientals
+Update backend/settings.yml to have your credientals
+
 See:
 https://twitter.com/#!/HoldensUnicorn
 https://github.com/holdensmagicalunicorn
